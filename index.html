@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="甜呱工作台">
+<meta name="theme-color" content="#F48FB1">
+<title>甜呱工作台 · 星露谷小屋</title>
+<style>
+/* ============ 星露谷粉主题 ============ */
+:root{
+  --pink-1:#FFE4EC; --pink-2:#F8BBD0; --pink-3:#F48FB1; --pink-4:#EC407A;
+  --cream:#FFF9F5; --mint:#C8E6C9; --mint-d:#81C784;
+  --purple:#E1BEE7; --purple-d:#BA68C8;
+  --yellow:#FFF3C4; --yellow-d:#FFD54F;
+  --blue:#BBDEFB; --blue-d:#64B5F6;
+  --ink:#5D4037; --ink-soft:#8D6E63; --ink-light:#BCAAA4;
+  --line:#F8BBD0; --card:#FFFFFF; --shadow:0 4px 14px rgba(244,143,177,.18);
+  --shadow-lg:0 8px 24px rgba(244,143,177,.25);
+  --radius:18px; --radius-sm:12px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla";
+  background:linear-gradient(135deg,#FFE4EC 0%,#FFF9F5 40%,#FCE4EC 100%);
+  background-attachment:fixed;color:var(--ink);min-height:100vh;
+  font-size:15px;line-height:1.6;
+}
+h1,h2,h3,h4{margin:0;font-weight:700;color:var(--ink)}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,select,textarea{font-family:inherit;font-size:15px;color:var(--ink)}
+a{color:var(--pink-4);text-decoration:none}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:var(--pink-2);border-radius:6px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* 像素分隔线 */
+.pixel-line{height:3px;background:repeating-linear-gradient(90deg,var(--pink-2) 0 6px,transparent 6px 12px);margin:12px 0;border-radius:2px}
+
+/* ============ 布局 ============ */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:230px;flex-shrink:0;background:linear-gradient(180deg,#FFF9F5 0%,#FFE4EC 100%);
+  border-right:2px dashed var(--pink-2);padding:18px 14px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;z-index:50;
+  display:flex;flex-direction:column;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 8px 14px;border-bottom:2px dotted var(--pink-2);margin-bottom:10px}
+.brand .logo{font-size:30px;filter:drop-shadow(0 2px 0 var(--pink-3))}
+.brand .title{font-size:18px;font-weight:800;color:var(--pink-4);line-height:1.1}
+.brand .subtitle{font-size:11px;color:var(--ink-soft);letter-spacing:1px}
+.nav{display:flex;flex-direction:column;gap:4px;flex:1}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--radius-sm);
+  color:var(--ink);font-weight:600;font-size:14px;transition:all .18s;text-align:left;width:100%;
+}
+.nav-item .ico{font-size:18px;width:24px;text-align:center}
+.nav-item:hover{background:rgba(248,187,208,.35)}
+.nav-item.active{background:linear-gradient(90deg,var(--pink-2),var(--purple));color:#fff;box-shadow:var(--shadow)}
+.nav-item.active .ico{transform:scale(1.1)}
+.nav-foot{font-size:11px;color:var(--ink-light);text-align:center;padding-top:10px;border-top:2px dotted var(--pink-2);margin-top:10px}
+.main{flex:1;padding:22px 26px 60px;max-width:980px;margin:0 auto;width:100%}
+
+/* 移动端顶栏 */
+.mobile-bar{display:none;position:sticky;top:0;z-index:60;
+  background:linear-gradient(90deg,var(--pink-2),var(--purple));
+  padding:12px 16px;align-items:center;gap:12px;box-shadow:var(--shadow)}
+.mobile-bar .menu-btn{font-size:22px;background:#fff;padding:8px 10px;border-radius:10px;box-shadow:var(--shadow)}
+.mobile-bar .m-title{color:#fff;font-weight:800;font-size:17px;flex:1}
+.mobile-bar .m-date{color:#fff;font-size:12px;opacity:.9}
+
+/* 抽屉遮罩 */
+.drawer-mask{display:none;position:fixed;inset:0;background:rgba(93,64,55,.4);z-index:40}
+
+/* ============ 通用组件 ============ */
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.page-head h2{font-size:22px;display:flex;align-items:center;gap:8px}
+.page-head .sub{font-size:12px;color:var(--ink-soft);font-weight:400}
+.card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:16px;border:2px solid #FFF}
+.card.pink{background:linear-gradient(135deg,#FFE4EC,#FFF9F5);border-color:var(--pink-2)}
+.card.mint{background:linear-gradient(135deg,#E8F5E9,#FFF9F5);border-color:var(--mint)}
+.card.purple{background:linear-gradient(135deg,#F3E5F5,#FFF9F5);border-color:var(--purple)}
+.card.yellow{background:linear-gradient(135deg,#FFFDE7,#FFF9F5);border-color:var(--yellow-d)}
+.section-title{font-size:16px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--pink-4)}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--radius-sm);
+  font-weight:600;font-size:14px;transition:all .15s;background:var(--pink-2);color:#5D4037}
+.btn:hover{background:var(--pink-3);color:#fff;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn.primary{background:linear-gradient(90deg,var(--pink-3),var(--purple-d));color:#fff}
+.btn.ghost{background:#fff;border:2px solid var(--pink-2);color:var(--pink-4)}
+.btn.danger{background:#FFCDD2;color:#C62828}
+.btn.sm{padding:6px 10px;font-size:12px}
+.btn.block{width:100%;justify-content:center;padding:13px}
+.icon-btn{width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:16px;background:#FFF;border:2px solid var(--pink-2);color:var(--pink-4)}
+.icon-btn:hover{background:var(--pink-1)}
+
+/* 表单 */
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:var(--ink-soft);font-weight:600;margin-bottom:5px}
+.field input,.field select,.field textarea{
+  width:100%;padding:10px 12px;border:2px solid var(--pink-1);border-radius:var(--radius-sm);background:#FFF;
+  transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--pink-3)}
+.field textarea{resize:vertical;min-height:70px}
+.field.row{display:flex;gap:10px}
+.field.row>*{flex:1}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.chip-group{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:7px 13px;border-radius:20px;background:#FFF;border:2px solid var(--pink-1);font-size:13px;font-weight:600;color:var(--ink-soft);transition:all .15s}
+.chip.on{background:var(--pink-2);border-color:var(--pink-3);color:#fff}
+.chip:hover{border-color:var(--pink-3)}
+
+/* 模态框 */
+.modal-mask{display:none;position:fixed;inset:0;background:rgba(93,64,55,.5);z-index:100;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal-mask.show{display:flex}
+.modal{background:#FFF;border-radius:var(--radius);width:100%;max-width:480px;margin:auto;box-shadow:var(--shadow-lg);overflow:hidden;border:3px solid var(--pink-2)}
+.modal-head{background:linear-gradient(90deg,var(--pink-2),var(--purple));color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{color:#fff;font-size:17px}
+.modal-body{padding:18px;max-height:70vh;overflow-y:auto}
+.modal-foot{padding:12px 18px;border-top:2px dashed var(--pink-1);display:flex;gap:10px;justify-content:flex-end}
+
+/* 列表项 */
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#FFF;border-radius:var(--radius-sm);margin-bottom:8px;border:2px solid #FFF8FB;transition:all .15s}
+.list-item:hover{border-color:var(--pink-2);box-shadow:var(--shadow)}
+.list-item.done{opacity:.55}
+.list-item.done .li-title{text-decoration:line-through}
+.li-title{font-weight:600;flex:1}
+.li-sub{font-size:12px;color:var(--ink-soft)}
+.li-actions{display:flex;gap:6px}
+.empty{text-align:center;padding:30px 14px;color:var(--ink-light);font-size:14px}
+.empty .big{font-size:40px;display:block;margin-bottom:8px}
+
+/* 标签页 */
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:8px 16px;border-radius:20px;background:#FFF;border:2px solid var(--pink-1);font-weight:600;font-size:13px;color:var(--ink-soft)}
+.tab.on{background:var(--pink-2);border-color:var(--pink-3);color:#fff}
+
+/* 统计卡片 */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.stat-card{background:#FFF;border-radius:var(--radius);padding:14px;text-align:center;border:2px solid #FFF;box-shadow:var(--shadow)}
+.stat-card .label{font-size:11px;color:var(--ink-soft);font-weight:600;margin-bottom:4px}
+.stat-card .num{font-size:22px;font-weight:800}
+.stat-card.income .num{color:var(--mint-d)}
+.stat-card.expense .num{color:var(--pink-4)}
+.stat-card.balance .num{color:var(--purple-d)}
+
+/* 月历 */
+.cal{background:#FFF;border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);margin-bottom:16px;border:2px solid #FFF}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cal-head .ym{font-weight:700;font-size:16px;color:var(--pink-4)}
+.cal-nav{display:flex;gap:6px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-dow{text-align:center;font-size:11px;color:var(--ink-soft);font-weight:700;padding:4px 0}
+.cal-day{aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;font-weight:600;cursor:pointer;background:#FFF8FB;border:2px solid transparent;position:relative;min-height:38px}
+.cal-day:hover{border-color:var(--pink-2)}
+.calday.other{opacity:.35}
+.cal-day.today{background:var(--yellow);border-color:var(--yellow-d)}
+.cal-day.sel{background:var(--pink-2);color:#fff;border-color:var(--pink-3)}
+.cal-day .dot{width:5px;height:5px;border-radius:50%;background:var(--pink-3);margin-top:2px}
+.cal-day.has .dot{display:block}
+.cal-day .dots{display:flex;gap:2px;height:5px;margin-top:1px}
+
+/* 月历色点 */
+.dot-schedule{background:var(--blue-d)}
+.dot-period{background:var(--pink-4)}
+.dot-memo{background:var(--mint-d)}
+
+/* 优先级标记 */
+.pri{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.pri-high{background:#E53935}.pri-mid{background:#FB8C00}.pri-low{background:var(--mint-d)}
+
+/* 照片预览 */
+.photo-preview{width:100%;max-height:200px;object-fit:cover;border-radius:var(--radius-sm);margin-top:8px;border:2px solid var(--pink-1)}
+.upload-area{border:2px dashed var(--pink-2);border-radius:var(--radius-sm);padding:20px;text-align:center;color:var(--ink-soft);cursor:pointer;background:#FFF8FB}
+.upload-area:hover{background:var(--pink-1)}
+.upload-area .big{font-size:30px;display:block;margin-bottom:6px}
+
+/* AI 分析提示 */
+.ai-badge{display:inline-flex;align-items:center;gap:4px;background:var(--purple);color:var(--purple-d);padding:3px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.ai-loading{display:inline-flex;align-items:center;gap:6px;color:var(--purple-d);font-size:13px;font-weight:600}
+
+/* 趋势图容器 */
+.chart-box{background:#FFF;border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);border:2px solid #FFF;margin-bottom:16px}
+
+/* 倒计时徽章 */
+.count-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700}
+.count-today{background:var(--yellow);color:#F57F17}
+.count-soon{background:var(--pink-2);color:#fff}
+.count-far{background:#F5F5F5;color:var(--ink-soft)}
+
+/* 朗读/语音按钮 */
+.voice-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:20px;background:var(--mint);color:#2E7D32;font-weight:600;font-size:13px;border:2px solid var(--mint-d)}
+.voice-btn.rec{background:#FFCDD2;color:#C62828;border-color:#E53935;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* 月历标记图例 */
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--ink-soft);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:4px}
+.legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+/* 隐藏 */
+.hidden{display:none!important}
+
+/* 响应式 */
+@media(max-width:860px){
+  .app{display:block}
+  .sidebar{position:fixed;left:0;top:0;width:240px;transform:translateX(-100%);transition:transform .25s;box-shadow:var(--shadow-lg);height:100vh;z-index:50}
+  .sidebar.open{transform:translateX(0);z-index:60}
+  .mobile-bar{display:flex}
+  .main{padding:14px 14px 80px;max-width:100%}
+  .stat-grid{grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .stat-card .num{font-size:18px}
+  .row-2{grid-template-columns:1fr}
+  .row-3{grid-template-columns:1fr 1fr}
+  .page-head h2{font-size:19px}
+  .modal{max-width:100%}
+  .cal-day{font-size:11px;min-height:34px}
+  .list-item{flex-wrap:wrap;gap:8px}
+  .list-item .li-title{white-space:normal}
+}
+@media(max-width:480px){
+  .stat-grid{grid-template-columns:1fr}
+  .row-3{grid-template-columns:1fr}
+  body{font-size:14px}
+}
+
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:24px;font-size:14px;z-index:300;transition:transform .3s;box-shadow:var(--shadow-lg)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- 移动端顶栏 -->
+  <div class="mobile-bar">
+    <button class="menu-btn" id="menuBtn">☰</button>
+    <div class="m-title">🐸 甜呱工作台</div>
+    <div class="m-date" id="mDate"></div>
+  </div>
+  <div class="drawer-mask" id="drawerMask"></div>
+
+  <!-- 左侧导航 -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo">🐸</div>
+      <div>
+        <div class="title">甜呱工作台</div>
+        <div class="subtitle">STARDREW HOME</div>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <button class="nav-item active" data-page="todo"><span class="ico">📝</span>待办清单</button>
+      <button class="nav-item" data-page="finance"><span class="ico">💰</span>收支记账</button>
+      <button class="nav-item" data-page="fit"><span class="ico">🏃</span>减脂记录</button>
+      <button class="nav-item" data-page="schedule"><span class="ico">📅</span>日程月历</button>
+      <button class="nav-item" data-page="anniv"><span class="ico">🌸</span>纪念日生日</button>
+      <button class="nav-item" data-page="learn"><span class="ico">🎓</span>学习记录</button>
+      <button class="nav-item" data-page="period"><span class="ico">🌺</span>经期记录</button>
+      <button class="nav-item" data-page="study"><span class="ico">📚</span>阅读口语</button>
+      <button class="nav-item" data-page="podcast"><span class="ico">🎧</span>播客小宇宙</button>
+      <button class="nav-item" data-page="settings"><span class="ico">⚙️</span>设置</button>
+    </nav>
+    <div class="nav-foot">星露谷小屋 · v1.0<br>💗 本地存储 · 隐私安全</div>
+  </aside>
+
+  <!-- 主内容 -->
+  <main class="main" id="main"></main>
+</div>
+
+<!-- 模态框容器 -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal" id="modal">
+    <div class="modal-head"><h3 id="modalTitle">标题</h3><button class="icon-btn" style="background:rgba(255,255,255,.3);border-color:transparent;color:#fff" onclick="closeModal()">✕</button></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   甜呱工作台 - 主脚本
+   ============================================================ */
+
+/* ---------- 工具函数 ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const todayStr = () => new Date().toISOString().slice(0,10);
+const nowStr = () => new Date().toISOString().slice(0,16);
+const fmtDate = d => { if(!d) return ''; const x=new Date(d); return `${x.getMonth()+1}月${x.getDate()}日`;};
+const fmtFull = d => { if(!d) return ''; const x=new Date(d); return `${x.getFullYear()}年${x.getMonth()+1}月${x.getDate()}日`;};
+const fmtDateTime = d => { if(!d) return ''; const x=new Date(d); return `${x.getMonth()+1}月${x.getDate()}日 ${String(x.getHours()).padStart(2,'0')}:${String(x.getMinutes()).padStart(2,'0')}`;};
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------- 存储层 ---------- */
+const DB = {
+  get(key, def){ try{ const v=localStorage.getItem('tg_'+key); return v?JSON.parse(v):def; }catch(e){ return def; } },
+  set(key, val){ localStorage.setItem('tg_'+key, JSON.stringify(val)); },
+  del(key){ localStorage.removeItem('tg_'+key); }
+};
+
+/* ---------- 农历转换 (1900-2100) ---------- */
+const LUNAR_DATA=[0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,0x04970,0x0a4b0,0x0b4b5,0x06a50,0x06d40,0x1ab54,0x02b60,0x09570,0x052f2,0x04970,0x06566,0x0d4a0,0x0ea50,0x06e95,0x05ad0,0x02b60,0x186e3,0x092e0,0x1c8d7,0x0c950,0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0,0x0d2b2,0x0a950,0x0b557,0x06ca0,0x0b550,0x15355,0x04da0,0x0a5b0,0x14573,0x052b0,0x0a9a8,0x0e950,0x06aa0,0x0aea6,0x0ab50,0x04b60,0x0aae4,0x0a570,0x05260,0x0f263,0x0d950,0x05b57,0x056a0,0x096d0,0x04dd5,0x04ad0,0x0a4d0,0x0d4d4,0x0d250,0x0d558,0x0b540,0x0b6a0,0x195a6,0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,0x0af46,0x0ab60,0x09570,0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x055c0,0x0ab60,0x096d5,0x092e0,0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,0x025d0,0x092d0,0x0cab5,0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,0x15176,0x052b0,0x0a930,0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,0x0d260,0x0ea65,0x0d530,0x05aa0,0x076a3,0x096d0,0x04afb,0x04ad0,0x0a4d0,0x1d0b6,0x0d250,0x0d520,0x0dd45,0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,0x1b255,0x06d20,0x0ada0,0x14b63,0x09370,0x049f8,0x04970,0x064b0,0x168a6,0x0ea50,0x06b20,0x1a6c4,0x0aae0,0x0a2e0,0x0d2e3,0x0c960,0x0d557,0x0d4a0,0x0da50,0x05d55,0x056a0,0x0a6d0,0x055d4,0x052d0,0x0a9b8,0x0a950,0x0b4a0,0x0b6a6,0x0ad50,0x055a0,0x0aba4,0x0a5b0,0x052b0,0x0b273,0x06930,0x07337,0x06aa0,0x0ad50,0x14b55,0x04b60,0x0a570,0x054e4,0x0d160,0x0e968,0x0d520,0x0daa0,0x16aa6,0x056d0,0x04ae0,0x0a9d4,0x0a2d0,0x0d150,0x0f252,0x0d520];
+const LUNAR_MONTH=['正','二','三','四','五','六','七','八','九','十','冬','腊'];
+const LUNAR_DAY=['初一','初二','初三','初四','初五','初六','初七','初八','初九','初十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十','廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
+function lunarYearDays(y){ let s=348; for(let i=0x8000;i>0x8;i>>=1) s+=(LUNAR_DATA[y-1900]&i)?1:0; return s+leapDays(y); }
+function leapMonth(y){ return LUNAR_DATA[y-1900]&0xf; }
+function leapDays(y){ return leapMonth(y)?((LUNAR_DATA[y-1900]&0x10000)?30:29):0; }
+function monthDays(y,m){ return (LUNAR_DATA[y-1900]&(0x10000>>m))?30:29; }
+function solar2lunar(date){
+  let offset=Math.floor((date - new Date(1900,0,31))/86400000);
+  let y=1900, temp=0;
+  for(; y<2101 && offset>0; y++){ temp=lunarYearDays(y); offset-=temp; }
+  if(offset<0){ offset+=temp; y--; }
+  let leap=leapMonth(y), isLeap=false, m=1;
+  for(; m<13 && offset>0; m++){
+    if(leap>0 && m===leap+1 && !isLeap){ m--; isLeap=true; temp=leapDays(y); }
+    else{ temp=monthDays(y,m); }
+    if(isLeap && m===leap+1) isLeap=false;
+    offset-=temp;
+  }
+  if(offset===0 && leap>0 && m===leap+1){ if(isLeap) isLeap=false; else{ isLeap=true; m--; } }
+  if(offset<0){ offset+=temp; m--; }
+  return { year:y, month:m, day:offset+1, monthStr:(isLeap?'闰':'')+LUNAR_MONTH[m-1]+'月', dayStr:LUNAR_DAY[offset], isLeap };
+}
+function lunar2solar(ly, lm, ld, isLeap){
+  let offset=0;
+  for(let i=1900;i<ly;i++) offset+=lunarYearDays(i);
+  let leap=leapMonth(ly);
+  for(let m=1;m<lm;m++){ offset+=monthDays(ly,m); if(m===leap) offset+=leapDays(ly); }
+  if(isLeap) offset+=monthDays(ly,lm);
+  offset+=ld-1;
+  return new Date(1900,0,31+Math.floor(offset));
+}
+function lunarNextSolar(ly, lm, ld, isLeap, toYear){
+  // 计算某农历日期在 toYear 年对应的公历日期
+  try{ return lunar2solar(toYear, lm, ld, isLeap && leapMonth(toYear)===lm); }catch(e){ return null; }
+}
+
+/* ---------- 路由 ---------- */
+const Pages = {};
+let currentPage = 'todo';
+function go(page){
+  currentPage = page;
+  $$('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
+  $('#main').innerHTML = '';
+  if(Pages[page]) Pages[page].render();
+  // 移动端关闭抽屉
+  $('#sidebar').classList.remove('open');
+  $('#drawerMask').style.display='none';
+  window.scrollTo(0,0);
+}
+
+/* ---------- 模态框 ---------- */
+function openModal(title, bodyHtml, footHtml){
+  $('#modalTitle').textContent=title;
+  $('#modalBody').innerHTML=bodyHtml;
+  $('#modalFoot').innerHTML=footHtml||'';
+  $('#modalMask').classList.add('show');
+}
+function closeModal(){ $('#modalMask').classList.remove('show'); }
+$('#modalMask').addEventListener('click', e=>{ if(e.target===$('#modalMask')) closeModal(); });
+
+/* ---------- 侧边栏 ---------- */
+$('#menuBtn').addEventListener('click', ()=>{
+  $('#sidebar').classList.add('open');
+  $('#drawerMask').style.display='block';
+});
+$('#drawerMask').addEventListener('click', ()=>{
+  $('#sidebar').classList.remove('open');
+  $('#drawerMask').style.display='none';
+});
+$$('#nav .nav-item').forEach(b=>{
+  b.addEventListener('click', function(){ go(this.dataset.page); });
+  b.addEventListener('touchend', function(e){ e.preventDefault(); go(this.dataset.page); });
+});
+
+/* ---------- 日期显示 ---------- */
+function refreshDate(){
+  const d=new Date();
+  const wk=['日','一','二','三','四','五','六'];
+  $('#mDate').textContent=`${d.getMonth()+1}/${d.getDate()} 周${wk[d.getDay()]}`;
+}
+refreshDate();
+
+/* ---------- 月历组件（可复用） ---------- */
+function buildCalendar(year, month, marks, onPick, selectedDate){
+  // marks: { 'YYYY-MM-DD': [{type:'schedule'}, {type:'period'}] }
+  const first=new Date(year, month, 1);
+  const startDow=first.getDay();
+  const daysInMonth=new Date(year, month+1, 0).getDate();
+  const today=todayStr();
+  const selStr = selectedDate ? selectedDate.slice(0,10) : null;
+  let html=`<div class="cal-head"><button class="icon-btn" id="calPrev">‹</button><div class="ym">${year}年${month+1}月</div><button class="icon-btn" id="calNext">›</button></div>`;
+  html+='<div class="cal-grid">';
+  ['日','一','二','三','四','五','六'].forEach(w=> html+=`<div class="cal-dow">${w}</div>`);
+  for(let i=0;i<startDow;i++) html+='<div class="cal-day other"></div>';
+  for(let d=1; d<=daysInMonth; d++){
+    const ds=new Date(year, month, d).toISOString().slice(0,10);
+    const m=marks[ds]||[];
+    let dotTypes=[];
+    if(m.some(x=>x.type==='schedule')) dotTypes.push('dot-schedule');
+    if(m.some(x=>x.type==='period')) dotTypes.push('dot-period');
+    if(m.some(x=>x.type==='memo')) dotTypes.push('dot-memo');
+    const cls=['cal-day'];
+    if(ds===today) cls.push('today');
+    if(ds===selStr) cls.push('sel');
+    if(m.length) cls.push('has');
+    let dots = dotTypes.slice(0,3).map(t=>`<span class="${t}" style="display:inline-block;width:5px;height:5px;border-radius:50%;margin:0 1px"></span>`).join('');
+    html+=`<div class="${cls.join(' ')}" data-date="${ds}">${d}${m.length?`<div class="dots">${dots}</div>`:''}</div>`;
+  }
+  html+='</div>';
+  html+='<div class="legend"><span><i class="dot-schedule" style="background:var(--blue-d)"></i>日程</span><span><i class="dot-period" style="background:var(--pink-4)"></i>经期</span><span><i class="dot-memo" style="background:var(--mint-d)"></i>纪念日</span></div>';
+  return html;
+}
+function bindCalendar(html, onPick, onNav){
+  // 委托在调用方处理
+}
+
+/* ============================================================
+   模块脚本（注入到主 <script> 内，go() 之前）
+   ============================================================ */
+
+/* ---------- 1. 待办模块 ---------- */
+Pages.todo = {
+  render(){
+    const list = DB.get('todos', []);
+    const today = todayStr();
+    const todayList = list.filter(t=>t.date<=today && !t.done).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+    const doneList = list.filter(t=>t.date<=today && t.done).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+    const todayDone = list.filter(t=>t.date===today && t.done);
+    // 近期待办：今天到未来7天
+    const in7 = new Date(); in7.setDate(in7.getDate()+7);
+    const upcoming = list.filter(t=>!t.done && t.date>today && t.date<=in7.toISOString().slice(0,10))
+      .sort((a,b)=>a.date.localeCompare(b.date)|| (a.time||'').localeCompare(b.time||''));
+    // 按日期分组
+    const groups={};
+    upcoming.forEach(t=>{ (groups[t.date]=groups[t.date]||[]).push(t); });
+
+    let html = `<div class="page-head">
+      <h2>📝 待办清单 <span class="sub">今天也要元气满满鸭</span></h2>
+      <button class="btn primary" onclick="Pages.todo.add()">＋ 新建待办</button>
+    </div>`;
+
+    // 今日
+    html += `<div class="card pink"><div class="section-title">🌟 今日待办 (${todayList.length})</div>`;
+    if(todayList.length===0 && todayDone.length===0){ html+='<div class="empty"><span class="big">🌷</span>今天没有待办，享受悠闲时光吧～</div>'; }
+    todayList.forEach(t=> html+=this.item(t));
+    if(todayDone.length){ html+=`<div class="pixel-line"></div><div style="font-size:12px;color:var(--ink-soft);margin-bottom:6px">已完成 ${todayDone.length}</div>`; todayDone.forEach(t=>html+=this.item(t)); }
+    html+='</div>';
+
+    // 近期
+    html += `<div class="card"><div class="section-title">📅 近期待办（7天内）</div>`;
+    if(Object.keys(groups).length===0){ html+='<div class="empty"><span class="big">🎈</span>近期没有待办</div>'; }
+    else{
+      for(const date in groups){
+        html+=`<div style="font-size:13px;color:var(--pink-4);font-weight:700;margin:8px 0 4px">${fmtFull(date)}</div>`;
+        groups[date].forEach(t=> html+=this.item(t));
+      }
+    }
+    html+='</div>';
+
+    // 已过期未完成
+    const overdue = list.filter(t=>!t.done && t.date<today);
+    if(overdue.length){
+      html += `<div class="card yellow"><div class="section-title">⏰ 已过期未完成 (${overdue.length})</div>`;
+      overdue.sort((a,b)=>a.date.localeCompare(b.date)).forEach(t=> html+=this.item(t));
+      html+='</div>';
+    }
+
+    $('#main').innerHTML = html;
+  },
+  item(t){
+    const pri = t.priority||'low';
+    return `<div class="list-item ${t.done?'done':''}">
+      <span class="pri pri-${pri}"></span>
+      <input type="checkbox" ${t.done?'checked':''} onchange="Pages.todo.toggle('${t.id}')" style="width:20px;height:20px;accent-color:var(--pink-3)">
+      <div style="flex:1">
+        <div class="li-title">${escapeHtml(t.title)}</div>
+        <div class="li-sub">${t.date===todayStr()?'今天':fmtDate(t.date)} ${t.time||''} ${t.note?'· '+escapeHtml(t.note):''}</div>
+      </div>
+      <div class="li-actions">
+        <button class="icon-btn" onclick="Pages.todo.edit('${t.id}')">✏️</button>
+        <button class="icon-btn" onclick="Pages.todo.del('${t.id}')">🗑️</button>
+      </div>
+    </div>`;
+  },
+  toggle(id){
+    const list=DB.get('todos',[]);
+    const t=list.find(x=>x.id===id); if(!t) return;
+    t.done=!t.done;
+    DB.set('todos',list); this.render();
+  },
+  add(){ this._form(); },
+  edit(id){ const t=DB.get('todos',[]).find(x=>x.id===id); if(t) this._form(t); },
+  del(id){
+    if(!confirm('确定删除这条待办？')) return;
+    DB.set('todos', DB.get('todos',[]).filter(x=>x.id!==id));
+    this.render(); toast('已删除');
+  },
+  _form(t){
+    const isEdit=!!t;
+    t=t||{title:'',date:todayStr(),time:'',priority:'mid',note:''};
+    const body=`
+      <div class="field"><label>标题</label><input id="f_title" value="${escapeHtml(t.title)}" placeholder="比如：写完报告"></div>
+      <div class="row-2">
+        <div class="field"><label>日期</label><input type="date" id="f_date" value="${t.date}"></div>
+        <div class="field"><label>时间</label><input type="time" id="f_time" value="${t.time||''}"></div>
+      </div>
+      <div class="field"><label>优先级</label>
+        <div class="chip-group" id="priGroup">
+          <button class="chip ${t.priority==='low'?'on':''}" data-v="low">🟢 低</button>
+          <button class="chip ${t.priority==='mid'?'on':''}" data-v="mid">🟠 中</button>
+          <button class="chip ${t.priority==='high'?'on':''}" data-v="high">🔴 高</button>
+        </div>
+      </div>
+      <div class="field"><label>备注</label><textarea id="f_note" placeholder="补充说明...">${escapeHtml(t.note||'')}</textarea></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.todo._save('${t.id||''}')">${isEdit?'保存':'添加'}</button>`;
+    openModal(isEdit?'编辑待办':'新建待办', body, foot);
+    let pri=t.priority||'mid';
+    $$('#priGroup .chip').forEach(c=>c.onclick=()=>{ pri=c.dataset.v; $$('#priGroup .chip').forEach(x=>x.classList.toggle('on',x===c)); });
+    this._curPri=pri;
+  },
+  _save(id){
+    const title=$('#f_title').value.trim();
+    if(!title){ toast('请输入标题'); return; }
+    const list=DB.get('todos',[]);
+    if(id){
+      const t=list.find(x=>x.id===id);
+      Object.assign(t,{title, date:$('#f_date').value, time:$('#f_time').value, priority:this._curPri, note:$('#f_note').value.trim()});
+    }else{
+      list.push({id:uid(), title, date:$('#f_date').value, time:$('#f_time').value, priority:this._curPri, note:$('#f_note').value.trim(), done:false, createdAt:Date.now()});
+    }
+    DB.set('todos',list); closeModal(); this.render(); toast('已保存');
+  }
+};
+
+/* ---------- 2. 收支记账 ---------- */
+Pages.finance = {
+  cats: {expense:['🍱 餐饮','🚇 交通','🛍️ 购物','🏠 居家','💊 医疗','🎮 娱乐','📱 数码','🎁 礼物','📚 学习','💄 美妆','🐱 宠物','✈️ 旅行','其他'], income:['💰 工资','🧧 红包','📈 理财','🛒 兼职','🎁 礼金','其他']},
+  render(){
+    const list=DB.get('finance',[]);
+    const y=new Date().getFullYear();
+    const yList=list.filter(r=>r.date.slice(0,4)==String(y));
+    const income=yList.filter(r=>r.type==='income').reduce((s,r)=>s+r.amount,0);
+    const expense=yList.filter(r=>r.type==='expense').reduce((s,r)=>s+r.amount,0);
+    const m=`${y}-${String(new Date().getMonth()+1).padStart(2,'0')}`;
+    const mList=list.filter(r=>r.date.slice(0,7)===m);
+    const mIncome=mList.filter(r=>r.type==='income').reduce((s,r)=>s+r.amount,0);
+    const mExpense=mList.filter(r=>r.type==='expense').reduce((s,r)=>s+r.amount,0);
+
+    let html=`<div class="page-head">
+      <h2>💰 收支记账 <span class="sub">${y}年小账本</span></h2>
+      <button class="btn primary" onclick="Pages.finance.add()">＋ 记一笔</button>
+    </div>`;
+
+    html+=`<div class="stat-grid">
+      <div class="stat-card income"><div class="label">${y}年累计收入</div><div class="num">¥${income.toFixed(2)}</div></div>
+      <div class="stat-card expense"><div class="label">${y}年累计支出</div><div class="num">¥${expense.toFixed(2)}</div></div>
+      <div class="stat-card balance"><div class="label">${y}年累计结余</div><div class="num">¥${(income-expense).toFixed(2)}</div></div>
+    </div>`;
+
+    html+=`<div class="card mint"><div class="section-title">📊 本月小结（${new Date().getMonth()+1}月）</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <div>收入 <b style="color:var(--mint-d)">¥${mIncome.toFixed(2)}</b></div>
+        <div>支出 <b style="color:var(--pink-4)">¥${mExpense.toFixed(2)}</b></div>
+        <div>结余 <b style="color:var(--purple-d)">¥${(mIncome-mExpense).toFixed(2)}</b></div>
+      </div></div>`;
+
+    // 按月分组列表
+    const byMonth={};
+    list.forEach(r=>{ (byMonth[r.date.slice(0,7)]=byMonth[r.date.slice(0,7)]||[]).push(r); });
+    const months=Object.keys(byMonth).sort().reverse();
+    html+=`<div class="card"><div class="section-title">📒 流水明细</div>`;
+    if(months.length===0) html+='<div class="empty"><span class="big">🐷</span>还没有记账，开始记第一笔吧～</div>';
+    months.forEach(my=>{
+      const arr=byMonth[my].sort((a,b)=>b.date.localeCompare(a.date));
+      const mi=arr.filter(r=>r.type==='income').reduce((s,r)=>s+r.amount,0);
+      const me=arr.filter(r=>r.type==='expense').reduce((s,r)=>s+r.amount,0);
+      html+=`<div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0 4px;padding:6px 10px;background:var(--pink-1);border-radius:10px">
+        <b>${my.slice(0,4)}年${parseInt(my.slice(5))}月</b>
+        <span style="font-size:12px">收¥${mi.toFixed(0)} 支¥${me.toFixed(0)}</span></div>`;
+      arr.forEach(r=>{
+        html+=`<div class="list-item">
+          <span style="font-size:22px">${r.category.split(' ')[0]||'💸'}</span>
+          <div style="flex:1"><div class="li-title">${escapeHtml(r.category)}</div>
+            <div class="li-sub">${fmtDate(r.date)} ${r.note?escapeHtml(r.note):''}</div></div>
+          <b style="color:${r.type==='income'?'var(--mint-d)':'var(--pink-4)'}">${r.type==='income'?'+':'-'}¥${r.amount.toFixed(2)}</b>
+          <div class="li-actions">
+            <button class="icon-btn" onclick="Pages.finance.edit('${r.id}')">✏️</button>
+            <button class="icon-btn" onclick="Pages.finance.del('${r.id}')">🗑️</button>
+          </div></div>`;
+      });
+    });
+    html+='</div>';
+
+    $('#main').innerHTML=html;
+  },
+  add(){ this._form(); },
+  edit(id){ const r=DB.get('finance',[]).find(x=>x.id===id); if(r) this._form(r); },
+  del(id){ if(!confirm('删除这条记录？')) return; DB.set('finance',DB.get('finance',[]).filter(x=>x.id!==id)); this.render(); toast('已删除'); },
+  _form(r){
+    const isEdit=!!r; r=r||{type:'expense',amount:'',category:'🍱 餐饮',date:todayStr(),note:''};
+    const cats=this.cats[r.type];
+    const body=`
+      <div class="field"><label>类型</label>
+        <div class="chip-group" id="typeGroup">
+          <button class="chip ${r.type==='expense'?'on':''}" data-v="expense">💸 支出</button>
+          <button class="chip ${r.type==='income'?'on':''}" data-v="income">💰 收入</button>
+        </div></div>
+      <div class="row-2">
+        <div class="field"><label>金额</label><input type="number" step="0.01" id="f_amount" value="${r.amount}" placeholder="0.00"></div>
+        <div class="field"><label>日期</label><input type="date" id="f_date" value="${r.date}"></div>
+      </div>
+      <div class="field"><label>分类</label>
+        <div class="chip-group" id="catGroup">${cats.map(c=>`<button class="chip ${r.category===c?'on':''}" data-v="${escapeHtml(c)}">${c}</button>`).join('')}</div>
+      </div>
+      <div class="field"><label>备注</label><input id="f_note" value="${escapeHtml(r.note||'')}" placeholder="可选"></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.finance._save('${r.id||''}')">${isEdit?'保存':'记一笔'}</button>`;
+    openModal(isEdit?'编辑记录':'记一笔', body, foot);
+    let type=r.type, cat=r.category;
+    $$('#typeGroup .chip').forEach(c=>c.onclick=()=>{
+      type=c.dataset.v; cat=this.cats[type][0];
+      $('#catGroup').innerHTML=this.cats[type].map(x=>`<button class="chip ${x===cat?'on':''}" data-v="${escapeHtml(x)}">${x}</button>`).join('');
+      $$('#catGroup .chip').forEach(x=>x.onclick=()=>{ cat=x.dataset.v; $$('#catGroup .chip').forEach(y=>y.classList.toggle('on',y===x)); });
+    });
+    $$('#catGroup .chip').forEach(x=>x.onclick=()=>{ cat=x.dataset.v; $$('#catGroup .chip').forEach(y=>y.classList.toggle('on',y===x)); });
+    this._cur={type,cat};
+  },
+  _save(id){
+    const amount=parseFloat($('#f_amount').value);
+    if(!amount||amount<=0){ toast('请输入金额'); return; }
+    const list=DB.get('finance',[]);
+    const data={type:this._cur.type, amount, category:this._cur.cat, date:$('#f_date').value, note:$('#f_note').value.trim()};
+    if(id){ const r=list.find(x=>x.id===id); Object.assign(r,data); } else { list.push({id:uid(),...data,createdAt:Date.now()}); }
+    DB.set('finance',list); closeModal(); this.render(); toast('已记录');
+  }
+};
+
+/* ---------- 4. 日程月历 ---------- */
+Pages.schedule = {
+  curDate: new Date(),
+  selDate: todayStr(),
+  render(){
+    const list=DB.get('schedules',[]);
+    const y=this.curDate.getFullYear(), m=this.curDate.getMonth();
+    const marks={};
+    list.forEach(s=>{
+      const ds=s.startAt.slice(0,10), de=s.endAt?s.endAt.slice(0,10):ds;
+      let d=new Date(ds), end=new Date(de);
+      while(d<=end){ (marks[d.toISOString().slice(0,10)]=marks[d.toISOString().slice(0,10)]||[]).push({type:'schedule'}); d.setDate(d.getDate()+1); }
+    });
+
+    let html=`<div class="page-head">
+      <h2>📅 日程月历 <span class="sub">规划你的每一天</span></h2>
+      <button class="btn primary" onclick="Pages.schedule.add()">＋ 新建日程</button>
+    </div>`;
+
+    html+=`<div id="calWrap">${buildCalendar(y,m,marks,null,this.selDate)}</div>`;
+
+    // 选中日期的日程
+    const dayList=list.filter(s=> s.startAt.slice(0,10)<=this.selDate && (s.endAt?s.endAt.slice(0,10):s.startAt.slice(0,10))>=this.selDate)
+      .sort((a,b)=>a.startAt.localeCompare(b.startAt));
+    html+=`<div class="card purple"><div class="section-title">📌 ${fmtFull(this.selDate)} 的日程 (${dayList.length})</div>`;
+    if(dayList.length===0) html+='<div class="empty"><span class="big">🌙</span>这天没有日程安排</div>';
+    dayList.forEach(s=>{
+      html+=`<div class="list-item" style="border-left:4px solid ${s.color||'var(--pink-3)'}">
+        <div style="flex:1">
+          <div class="li-title">${escapeHtml(s.title)}</div>
+          <div class="li-sub">⏰ ${fmtDateTime(s.startAt)}${s.endAt?' → '+fmtDateTime(s.endAt):''} ${s.location?'· 📍 '+escapeHtml(s.location):''}</div>
+          ${s.note?`<div class="li-sub" style="margin-top:3px">${escapeHtml(s.note)}</div>`:''}
+        </div>
+        <div class="li-actions">
+          <button class="icon-btn" onclick="Pages.schedule.edit('${s.id}')">✏️</button>
+          <button class="icon-btn" onclick="Pages.schedule.del('${s.id}')">🗑️</button>
+        </div></div>`;
+    });
+    html+='</div>';
+
+    $('#main').innerHTML=html;
+    // 绑定
+    $('#calPrev').onclick=()=>{ this.curDate=new Date(y,m-1,1); this.render(); };
+    $('#calNext').onclick=()=>{ this.curDate=new Date(y,m+1,1); this.render(); };
+    $$('#calWrap .cal-day[data-date]').forEach(el=>el.onclick=()=>{ this.selDate=el.dataset.date; this.render(); });
+  },
+  add(){ this._form(); },
+  edit(id){ const s=DB.get('schedules',[]).find(x=>x.id===id); if(s) this._form(s); },
+  del(id){ if(!confirm('删除这条日程？')) return; DB.set('schedules',DB.get('schedules',[]).filter(x=>x.id!==id)); this.render(); toast('已删除'); },
+  _form(s){
+    const isEdit=!!s; s=s||{title:'',startAt:nowStr(),endAt:'',location:'',color:'#F48FB1',note:''};
+    const colors=[['#F48FB1','粉'],['#BA68C8','紫'],['#64B5F6','蓝'],['#81C784','绿'],['#FFD54F','黄'],['#FF8A65','橙']];
+    const body=`
+      <div class="field"><label>标题</label><input id="f_title" value="${escapeHtml(s.title)}" placeholder="比如：和小伙伴野餐"></div>
+      <div class="field"><label>开始时间</label><input type="datetime-local" id="f_start" value="${s.startAt? s.startAt.slice(0,16):''}"></div>
+      <div class="field"><label>结束时间（可选）</label><input type="datetime-local" id="f_end" value="${s.endAt? s.endAt.slice(0,16):''}"></div>
+      <div class="field"><label>地点</label><input id="f_loc" value="${escapeHtml(s.location||'')}" placeholder="可选"></div>
+      <div class="field"><label>颜色标签</label>
+        <div class="chip-group" id="colorGroup">${colors.map(c=>`<button class="chip ${s.color===c[0]?'on':''}" data-v="${c[0]}" style="${s.color===c[0]?'background:'+c[0]+';color:#fff':'color:'+c[0]}">● ${c[1]}</button>`).join('')}</div>
+      </div>
+      <div class="field"><label>备注</label><textarea id="f_note" placeholder="可选">${escapeHtml(s.note||'')}</textarea></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.schedule._save('${s.id||''}')">${isEdit?'保存':'添加'}</button>`;
+    openModal(isEdit?'编辑日程':'新建日程', body, foot);
+    let color=s.color;
+    $$('#colorGroup .chip').forEach(c=>c.onclick=()=>{ color=c.dataset.v; $$('#colorGroup .chip').forEach(x=>{ const on=x===c; x.classList.toggle('on',on); x.style.cssText = on?`background:${color};color:#fff`:`color:${x.dataset.v}`; }); });
+    this._curColor=color;
+  },
+  _save(id){
+    const title=$('#f_title').value.trim();
+    if(!title){ toast('请输入标题'); return; }
+    const startAt=$('#f_start').value;
+    if(!startAt){ toast('请选择开始时间'); return; }
+    const endAt=$('#f_end').value;
+    const data={title, startAt:startAt+':00', endAt:endAt?(endAt+':00'):'', location:$('#f_loc').value.trim(), color:this._curColor, note:$('#f_note').value.trim()};
+    const list=DB.get('schedules',[]);
+    if(id){ const s=list.find(x=>x.id===id); Object.assign(s,data); } else { list.push({id:uid(),...data,createdAt:Date.now()}); }
+    DB.set('schedules',list); closeModal(); this.render(); toast('已保存');
+  }
+};
+
+/* ---------- 5. 纪念日 & 生日 ---------- */
+Pages.anniv = {
+  render(){
+    const list=DB.get('anniv',[]);
+    const today=new Date(); today.setHours(0,0,0,0);
+    const items=list.map(a=>this.calc(a, today)).sort((a,b)=>a.days-b.days);
+    let html=`<div class="page-head">
+      <h2>🌸 纪念日 & 生日 <span class="sub">珍藏每个重要日子</span></h2>
+      <button class="btn primary" onclick="Pages.anniv.add()">＋ 添加</button>
+    </div>`;
+
+    if(items.length===0){ html+=`<div class="card pink"><div class="empty"><span class="big">🎀</span>还没有纪念日，添加第一个重要日子吧～</div></div>`; }
+
+    // 即将到来
+    const upcoming=items.filter(x=>x.days>=0);
+    const passed=items.filter(x=>x.days<0);
+    if(upcoming.length){
+      html+=`<div class="card yellow"><div class="section-title">⏳ 即将到来</div>`;
+      upcoming.forEach(x=>html+=this.item(x,today));
+      html+='</div>';
+    }
+    if(passed.length){
+      html+=`<div class="card"><div class="section-title">📜 已过</div>`;
+      passed.forEach(x=>html+=this.item(x,today));
+      html+='</div>';
+    }
+
+    // 今日
+    const todayItems=items.filter(x=>x.days===0);
+    if(todayItems.length){
+      html=`<div class="card pink" style="border:3px solid var(--pink-3)">
+        <div class="section-title">🎉 今天！</div>
+        ${todayItems.map(x=>`<div style="text-align:center;padding:8px"><div style="font-size:36px">${x.type==='生日'?'🎂':'🎊'}</div><div style="font-size:18px;font-weight:800;color:var(--pink-4)">${escapeHtml(x.name)}</div><div style="color:var(--ink-soft);font-size:13px">${x.type} · ${x.relation}</div></div>`).join('')}
+      </div>` + html;
+    }
+
+    $('#main').innerHTML=html;
+  },
+  calc(a, today){
+    const y=today.getFullYear();
+    let nextDate;
+    if(a.calendar==='lunar' && a.repeat){
+      // 农历重复，找今年对应的公历
+      const parts=a.date.split('-'); // 存储为农历 YYYY-M-D-isLeap
+      const ly=parseInt(parts[0]), lm=parseInt(parts[1]), ld=parseInt(parts[2]), isLeap=parts[3]==='1';
+      let tryY=y;
+      nextDate=lunarNextSolar(tryY, lm, ld, isLeap, tryY);
+      if(!nextDate || nextDate<today){ tryY=y+1; nextDate=lunarNextSolar(tryY, lm, ld, isLeap, tryY); }
+      if(!nextDate) nextDate=new Date(a.date.replace(/-\d$/,''));
+    } else if(a.repeat){
+      nextDate=new Date(a.date); nextDate.setFullYear(y);
+      if(nextDate<today) nextDate.setFullYear(y+1);
+    } else {
+      nextDate=new Date(a.date);
+    }
+    nextDate.setHours(0,0,0,0);
+    const days=Math.round((nextDate-today)/86400000);
+    let lunarStr='';
+    if(a.calendar==='lunar'){ const parts=a.date.split('-'); const lm=parseInt(parts[1]), ld=parseInt(parts[2]); lunarStr=`农历${LUNAR_MONTH[lm-1]||''}月${LUNAR_DAY[ld-1]||(ld+'日')}`; }
+    return {...a, nextDate, days, lunarStr};
+  },
+  item(x, today){
+    let badge;
+    if(x.days===0) badge=`<span class="count-badge count-today">🎉 就是今天</span>`;
+    else if(x.days<=7) badge=`<span class="count-badge count-soon">还有 ${x.days} 天</span>`;
+    else badge=`<span class="count-badge count-far">还有 ${x.days} 天</span>`;
+    const ico=x.type==='生日'?'🎂':(x.relation==='自己'?'✨':'🎊');
+    const dateStr = x.lunarStr ? `${x.lunarStr}（${fmtFull(x.nextDate)}）` : fmtFull(x.nextDate);
+    return `<div class="list-item">
+      <span style="font-size:24px">${ico}</span>
+      <div style="flex:1">
+        <div class="li-title">${escapeHtml(x.name)} <span style="font-size:11px;color:var(--ink-soft);font-weight:400">${x.type}·${x.relation}${x.calendar==='lunar'?'·农历':''}</span></div>
+        <div class="li-sub">${x.days<0?'已过 ':'下次：'}${dateStr}</div>
+      </div>
+      ${badge}
+      <div class="li-actions">
+        <button class="icon-btn" onclick="Pages.anniv.edit('${x.id}')">✏️</button>
+        <button class="icon-btn" onclick="Pages.anniv.del('${x.id}')">🗑️</button>
+      </div></div>`;
+  },
+  add(){ this._form(); },
+  edit(id){ const a=DB.get('anniv',[]).find(x=>x.id===id); if(a) this._form(a); },
+  del(id){ if(!confirm('删除这条记录？')) return; DB.set('anniv',DB.get('anniv',[]).filter(x=>x.id!==id)); this.render(); toast('已删除'); },
+  _form(a){
+    const isEdit=!!a; a=a||{name:'',type:'生日',date:todayStr(),calendar:'solar',repeat:true,relation:'朋友',note:''};
+    const rels=['自己','亲人','朋友','其他'];
+    const types=['生日','纪念日'];
+    const body=`
+      <div class="field"><label>名称</label><input id="f_name" value="${escapeHtml(a.name)}" placeholder="比如：妈妈 / 相恋纪念日"></div>
+      <div class="row-2">
+        <div class="field"><label>类型</label>
+          <div class="chip-group" id="typeGroup">${types.map(t=>`<button class="chip ${a.type===t?'on':''}" data-v="${t}">${t==='生日'?'🎂':'🎊'} ${t}</button>`).join('')}</div>
+        </div>
+        <div class="field"><label>关系</label>
+          <div class="chip-group" id="relGroup">${rels.map(r=>`<button class="chip ${a.relation===r?'on':''}" data-v="${r}">${r}</button>`).join('')}</div>
+        </div>
+      </div>
+      <div class="field"><label>历法</label>
+        <div class="chip-group" id="calGroup">
+          <button class="chip ${a.calendar==='solar'?'on':''}" data-v="solar">☀️ 公历</button>
+          <button class="chip ${a.calendar==='lunar'?'on':''}" data-v="lunar">🌙 农历</button>
+        </div></div>
+      <div class="field" id="dateField"></div>
+      <div class="field"><label>每年重复</label>
+        <div class="chip-group" id="repGroup">
+          <button class="chip ${a.repeat?'on':''}" data-v="1">🔁 每年</button>
+          <button class="chip ${!a.repeat?'on':''}" data-v="0">1️⃣ 仅一次</button>
+        </div></div>
+      <div class="field"><label>备注</label><input id="f_note" value="${escapeHtml(a.note||'')}" placeholder="可选"></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.anniv._save('${a.id||''}')">${isEdit?'保存':'添加'}</button>`;
+    openModal(isEdit?'编辑纪念日':'添加纪念日', body, foot);
+
+    let type=a.type, rel=a.relation, cal=a.calendar, rep=a.repeat;
+    // 农历日期存储格式：存公历日期输入框，但内部转农历。这里简化：农历时让用户选年月日下拉
+    const renderDate=()=>{
+      if(cal==='lunar'){
+        const cur=a.date.split('-');
+        const cy=cur[0]||new Date().getFullYear();
+        const cm=parseInt(cur[1])||1;
+        const cd=parseInt(cur[2])||1;
+        const isLeap=cur[3]==='1';
+        let yOpt=''; for(let i=new Date().getFullYear();i<=new Date().getFullYear()+5;i++) yOpt+=`<option value="${i}" ${i==cy?'selected':''}>${i}年</option>`;
+        let mOpt=''; for(let i=1;i<=12;i++) mOpt+=`<option value="${i}" ${i==cm?'selected':''}>${['正','二','三','四','五','六','七','八','九','十','冬','腊'][i-1]}月</option>`;
+        let dOpt=''; for(let i=1;i<=30;i++) dOpt+=`<option value="${i}" ${i==cd?'selected':''}>${i}日</option>`;
+        $('#dateField').innerHTML=`<label>农历日期</label>
+          <div class="row-3">
+            <select id="f_ly">${yOpt}</select>
+            <select id="f_lm">${mOpt}</select>
+            <select id="f_ld">${dOpt}</select>
+          </div>
+          <label style="margin-top:8px"><input type="checkbox" id="f_leap" ${isLeap?'checked':''}> 闰月（一般不勾）</label>`;
+      } else {
+        $('#dateField').innerHTML=`<label>日期</label><input type="date" id="f_date" value="${a.calendar==='solar'?a.date:todayStr()}">`;
+      }
+    };
+    renderDate();
+    $$('#typeGroup .chip').forEach(c=>c.onclick=()=>{ type=c.dataset.v; $$('#typeGroup .chip').forEach(x=>x.classList.toggle('on',x===c)); });
+    $$('#relGroup .chip').forEach(c=>c.onclick=()=>{ rel=c.dataset.v; $$('#relGroup .chip').forEach(x=>x.classList.toggle('on',x===c)); });
+    $$('#calGroup .chip').forEach(c=>c.onclick=()=>{ cal=c.dataset.v; $$('#calGroup .chip').forEach(x=>x.classList.toggle('on',x===c)); renderDate(); });
+    $$('#repGroup .chip').forEach(c=>c.onclick=()=>{ rep=c.dataset.v==='1'; $$('#repGroup .chip').forEach(x=>x.classList.toggle('on',x===c)); });
+    this._cur={type,rel,cal,rep};
+  },
+  _save(id){
+    const name=$('#f_name').value.trim();
+    if(!name){ toast('请输入名称'); return; }
+    const {type,rel,cal,rep}=this._cur;
+    let date;
+    if(cal==='lunar'){
+      const ly=$('#f_ly').value, lm=$('#f_lm').value, ld=$('#f_ld').value, isLeap=$('#f_leap').checked;
+      date=`${ly}-${lm}-${ld}-${isLeap?1:0}`;
+    } else {
+      date=$('#f_date').value;
+      if(!date){ toast('请选择日期'); return; }
+    }
+    const data={name,type,date,calendar:cal,repeat:rep,relation:rel,note:$('#f_note').value.trim()};
+    const list=DB.get('anniv',[]);
+    if(id){ const a=list.find(x=>x.id===id); Object.assign(a,data); } else { list.push({id:uid(),...data,createdAt:Date.now()}); }
+    DB.set('anniv',list); closeModal(); this.render(); toast('已保存');
+  }
+};
+
+/* ---------- 6. 学习记录（综合学习管理） ---------- */
+Pages.learn = {
+  tab:'course',
+  render(){
+    let html=`<div class="page-head">
+      <h2>🎓 学习记录 <span class="sub">每天进步一点点</span></h2>
+    </div>`;
+    html+=`<div class="tabs">
+      <button class="tab ${this.tab==='course'?'on':''}" onclick="Pages.learn.tab='course';Pages.learn.render()">📚 课程科目</button>
+      <button class="tab ${this.tab==='clock'?'on':''}" onclick="Pages.learn.tab='clock';Pages.learn.render()">⏱️ 学习打卡</button>
+      <button class="tab ${this.tab==='note'?'on':''}" onclick="Pages.learn.tab='note';Pages.learn.render()">📝 学习笔记</button>
+      <button class="tab ${this.tab==='wrong'?'on':''}" onclick="Pages.learn.tab='wrong';Pages.learn.render()">❌ 错题本</button>
+    </div>`;
+    if(this.tab==='course') html+=this.course();
+    else if(this.tab==='clock') html+=this.clock();
+    else if(this.tab==='note') html+=this.note();
+    else html+=this.wrong();
+    $('#main').innerHTML=html;
+  },
+  /* 课程科目 */
+  course(){
+    const list=DB.get('learn_course',[]);
+    // 统计
+    const total=list.length;
+    const studying=list.filter(c=>c.status==='进行中').length;
+    const done=list.filter(c=>c.status==='已完成').length;
+    let html=`<div class="stat-grid">
+      <div class="stat-card balance"><div class="label">总课程</div><div class="num">${total}</div></div>
+      <div class="stat-card expense"><div class="label">进行中</div><div class="num">${studying}</div></div>
+      <div class="stat-card income"><div class="label">已完成</div><div class="num">${done}</div></div>
+    </div>`;
+    html+=`<button class="btn primary block" onclick="Pages.learn.addCourse()" style="margin-bottom:14px">＋ 添加课程/科目</button>`;
+    if(list.length===0) html+=`<div class="card"><div class="empty"><span class="big">📚</span>还没有课程，添加你正在学的科目吧～</div></div>`;
+    list.forEach(c=>{
+      const pct=c.progress||0;
+      html+=`<div class="card ${c.status==='已完成'?'mint':'purple'}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:16px;color:var(--pink-4)">${escapeHtml(c.name)} <span style="font-size:11px;color:var(--ink-soft);font-weight:400">${c.status}</span></div>
+            <div class="li-sub">${escapeHtml(c.teacher||'')} ${c.platform?'· '+escapeHtml(c.platform):''} · 总${c.totalHours||0}h 已学${c.doneHours||0}h</div>
+            <div style="margin:8px 0"><div style="background:#FFE4EC;border-radius:8px;height:8px;overflow:hidden"><div style="width:${pct}%;height:100%;background:var(--pink-3)"></div></div><div style="font-size:11px;color:var(--ink-soft);margin-top:2px">进度 ${pct}%</div></div>
+          </div>
+          <div class="li-actions">
+            <button class="icon-btn" onclick="Pages.learn.editCourse('${c.id}')">✏️</button>
+            <button class="icon-btn" onclick="Pages.learn.delCourse('${c.id}')">🗑️</button>
+          </div>
+        </div>
+        ${c.note?`<div class="li-sub" style="margin-top:6px">${escapeHtml(c.note)}</div>`:''}
+      </div>`;
+    });
+    return html;
+  },
+  addCourse(){ this._courseForm(); },
+  editCourse(id){ const c=DB.get('learn_course',[]).find(x=>x.id===id); if(c) this._courseForm(c); },
+  delCourse(id){ if(!confirm('删除这门课程？')) return; DB.set('learn_course',DB.get('learn_course',[]).filter(x=>x.id!==id)); this.render(); toast('已删除'); },
+  _courseForm(c){
+    const isEdit=!!c; c=c||{name:'',status:'进行中',teacher:'',platform:'',totalHours:'',doneHours:'',progress:0,note:''};
+    const body=`
+      <div class="row-2">
+        <div class="field"><label>课程/科目名</label><input id="f_name" value="${escapeHtml(c.name)}" placeholder="比如：高等数学、Python入门"></div>
+        <div class="field"><label>状态</label>
+          <div class="chip-group" id="statusGroup">${['未开始','进行中','已完成','已暂停'].map(s=>`<button class="chip ${c.status===s?'on':''}" data-v="${s}">${s}</button>`).join('')}</div>
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="field"><label>老师/讲师</label><input id="f_teacher" value="${escapeHtml(c.teacher||'')}" placeholder="可选"></div>
+        <div class="field"><label>平台/学校</label><input id="f_platform" value="${escapeHtml(c.platform||'')}" placeholder="如 B站、网易、XX大学"></div>
+      </div>
+      <div class="row-3">
+        <div class="field"><label>总课时(h)</label><input type="number" id="f_total" value="${c.totalHours}" placeholder="40"></div>
+        <div class="field"><label>已学(h)</label><input type="number" id="f_done" value="${c.doneHours}" placeholder="10"></div>
+        <div class="field"><label>进度(%)</label><input type="number" id="f_progress" value="${c.progress}" placeholder="25"></div>
+      </div>
+      <div class="field"><label>备注</label><textarea id="f_note" placeholder="学习目标、重点...">${escapeHtml(c.note||'')}</textarea></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.learn._saveCourse('${c.id||''}')">${isEdit?'保存':'添加'}</button>`;
+    openModal(isEdit?'编辑课程':'添加课程', body, foot);
+    let status=c.status;
+    $$('#statusGroup .chip').forEach(ch=>ch.onclick=()=>{ status=ch.dataset.v; $$('#statusGroup .chip').forEach(x=>x.classList.toggle('on',x===ch)); });
+    this._curStatus=status;
+  },
+  _saveCourse(id){
+    const name=$('#f_name').value.trim();
+    if(!name){ toast('请输入课程名'); return; }
+    const total=parseFloat($('#f_total').value)||0, done=parseFloat($('#f_done').value)||0;
+    let progress=parseInt($('#f_progress').value)||0;
+    if(total>0 && done>0 && !progress) progress=Math.round(done/total*100);
+    const data={name,status:this._curStatus,teacher:$('#f_teacher').value.trim(),platform:$('#f_platform').value.trim(),totalHours:total,doneHours:done,progress,note:$('#f_note').value.trim()};
+    const list=DB.get('learn_course',[]);
+    if(id){ const c=list.find(x=>x.id===id); Object.assign(c,data); } else { list.push({id:uid(),...data,createdAt:Date.now()}); }
+    DB.set('learn_course',list); closeModal(); this.render(); toast('已保存');
+  },
+  /* 学习打卡 */
+  clock(){
+    const logs=DB.get('learn_clock',[]).sort((a,b)=>b.date.localeCompare(a.date));
+    const streak=this._streak(logs);
+    const today=todayStr();
+    const todayLogs=logs.filter(l=>l.date===today);
+    const todayMin=todayLogs.reduce((s,l)=>s+(l.duration||0),0);
+    const week=logs.filter(l=>{ const d=new Date(l.date); const w=new Date(); w.setDate(w.getDate()-7); return d>=w; });
+    const weekMin=week.reduce((s,l)=>s+(l.duration||0),0);
+    let html=`<div class="stat-grid">
+      <div class="stat-card expense"><div class="label">🔥 连续打卡</div><div class="num">${streak}天</div></div>
+      <div class="stat-card income"><div class="label">今日学习</div><div class="num">${todayMin}分</div></div>
+      <div class="stat-card balance"><div class="label">本周累计</div><div class="num">${Math.round(weekMin/60*10)/10}h</div></div>
+    </div>`;
+    html+=`<button class="btn primary block" onclick="Pages.learn.addClock()" style="margin-bottom:14px">＋ 记录学习打卡</button>`;
+    if(logs.length===0) html+=`<div class="card"><div class="empty"><span class="big">⏱️</span>还没有打卡记录，开始第一次学习打卡吧～</div></div>`;
+    // 按日期分组
+    const byDate={};
+    logs.forEach(l=>{ (byDate[l.date]=byDate[l.date]||[]).push(l); });
+    Object.keys(byDate).slice(0,14).forEach(d=>{
+      const arr=byDate[d];
+      const min=arr.reduce((s,l)=>s+(l.duration||0),0);
+      html+=`<div class="card yellow"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b>${fmtFull(d)}</b><span style="font-size:12px;color:var(--ink-soft)">共 ${min} 分钟</span></div>`;
+      arr.forEach(l=>{
+        html+=`<div class="list-item">
+          <span style="font-size:18px">${l.subject?'📘':''}</span>
+          <div style="flex:1">
+            <div class="li-title">${escapeHtml(l.subject||'学习')} · ${l.duration||0}分钟</div>
+            <div class="li-sub">${l.startTime||''} ${l.note?'· '+escapeHtml(l.note):''}</div>
+          </div>
+          <div class="li-actions">
+            <button class="icon-btn" onclick="Pages.learn.editClock('${l.id}')">✏️</button>
+            <button class="icon-btn" onclick="Pages.learn.delClock('${l.id}')">🗑️</button>
+          </div></div>`;
+      });
+      html+='</div>';
+    });
+    return html;
+  },
+  _streak(logs){
+    if(logs.length===0) return 0;
+    const set=new Set(logs.map(l=>l.date));
+    let n=0; let d=new Date();
+    // 如果今天没打卡，允许从昨天开始算
+    if(!set.has(d.toISOString().slice(0,10))) d.setDate(d.getDate()-1);
+    while(set.has(d.toISOString().slice(0,10))){ n++; d.setDate(d.getDate()-1); }
+    return n;
+  },
+  addClock(){ this._clockForm(); },
+  editClock(id){ const l=DB.get('learn_clock',[]).find(x=>x.id===id); if(l) this._clockForm(l); },
+  delClock(id){ if(!confirm('删除这条打卡？')) return; DB.set('learn_clock',DB.get('learn_clock',[]).filter(x=>x.id!==id)); this.render(); toast('已删除'); },
+  _clockForm(l){
+    const isEdit=!!l; l=l||{date:todayStr(),subject:'',duration:'',startTime:'',note:''};
+    const courses=DB.get('learn_course',[]).map(c=>c.name);
+    const body=`
+      <div class="row-2">
+        <div class="field"><label>日期</label><input type="date" id="f_date" value="${l.date}"></div>
+        <div class="field"><label>开始时间</label><input type="time" id="f_start" value="${l.startTime||''}"></div>
+      </div>
+      <div class="field"><label>学习科目</label>
+        ${courses.length?`<div class="chip-group" id="subjGroup">${courses.map(c=>`<button class="chip ${l.subject===c?'on':''}" data-v="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join('')}</div>`:''}
+        <input id="f_subject" value="${escapeHtml(l.subject||'')}" placeholder="或手动输入科目" style="margin-top:${courses.length?'8px':'0'}">
+      </div>
+      <div class="field"><label>学习时长(分钟)</label><input type="number" id="f_dur" value="${l.duration}" placeholder="60"></div>
+      <div class="field"><label>学习内容/心得</label><textarea id="f_note" placeholder="学了什么、收获...">${escapeHtml(l.note||'')}</textarea></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.learn._saveClock('${l.id||''}')">${isEdit?'保存':'打卡'}</button>`;
+    openModal(isEdit?'编辑打卡':'学习打卡', body, foot);
+    if(courses.length){
+      $$('#subjGroup .chip').forEach(ch=>ch.onclick=()=>{ $('#f_subject').value=ch.dataset.v; $$('#subjGroup .chip').forEach(x=>x.classList.toggle('on',x===ch)); });
+    }
+  },
+  _saveClock(id){
+    const dur=parseInt($('#f_dur').value);
+    if(!dur||dur<=0){ toast('请输入学习时长'); return; }
+    const data={date:$('#f_date').value,startTime:$('#f_start').value,subject:$('#f_subject').value.trim(),duration:dur,note:$('#f_note').value.trim()};
+    const list=DB.get('learn_clock',[]);
+    if(id){ const l=list.find(x=>x.id===id); Object.assign(l,data); } else { list.push({id:uid(),...data,createdAt:Date.now()}); }
+    DB.set('learn_clock',list); closeModal(); this.render(); toast('打卡成功');
+  },
+  /* 学习笔记 */
+  note(){
+    const list=DB.get('learn_note',[]).sort((a,b)=>b.date.localeCompare(a.date));
+    let html=`<button class="btn primary block" onclick="Pages.learn.addNote()" style="margin-bottom:14px">＋ 写学习笔记</button>`;
+    if(list.length===0) html+=`<div class="card"><div class="empty"><span class="big">📝</span>还没有笔记</div></div>`;
+    list.forEach(n=>{
+      html+=`<div class="card pink">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><b>${fmtFull(n.date)}</b> ${n.subject?`· ${escapeHtml(n.subject)}`:''}</div>
+          <div class="li-actions">
+            <button class="icon-btn" onclick="Pages.learn.viewNote('${n.id}')">📖</button>
+            <button class="icon-btn" onclick="Pages.learn.delNote('${n.id}')">🗑️</button>
+          </div>
+        </div>
+        ${n.title?`<div style="font-weight:700;margin:6px 0;color:var(--pink-4)">${escapeHtml(n.title)}</div>`:''}
+        <div style="color:var(--ink-soft);font-size:14px;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(n.content)}</div>
+        ${n.tags&&n.tags.length?`<div style="margin-top:6px">${n.tags.map(t=>`<span style="font-size:11px;background:var(--purple);color:var(--purple-d);padding:2px 8px;border-radius:10px;margin:2px;display:inline-block">#${escapeHtml(t)}</span>`).join('')}</div>`:''}
+      </div>`;
+    });
+    return html;
+  },
+  addNote(){ this._noteForm(); },
+  viewNote(id){ const n=DB.get('learn_note',[]).find(x=>x.id===id); if(n) this._noteForm(n,true); },
+  delNote(id){ if(!confirm('删除这篇笔记？')) return; DB.set('learn_note',DB.get('learn_note',[]).filter(x=>x.id!==id)); this.render(); toast('已删除'); },
+  _noteForm(n,readonly){
+    const isEdit=!!n; n=n||{date:todayStr(),subject:'',title:'',content:'',tags:[]};
+    const courses=DB.get('learn_course',[]).map(c=>c.name);
+    const body=`
+      <div class="row-2">
+        <div class="field"><label>日期</label><input type="date" id="f_date" value="${n.date}" ${readonly?'disabled':''}></div>
+        <div class="field"><label>科目</label>
+          <input id="f_subject" value="${escapeHtml(n.subject||'')}" placeholder="可选" list="courseList" ${readonly?'disabled':''}>
+          <datalist id="courseList">${courses.map(c=>`<option value="${escapeHtml(c)}">`).join('')}</datalist>
+        </div>
+      </div>
+      <div class="field"><label>标题</label><input id="f_title" value="${escapeHtml(n.title)}" placeholder="笔记标题" ${readonly?'disabled':''}></div>
+      <div class="field"><label>正文</label><textarea id="f_content" rows="10" placeholder="知识点、重点、疑问..." ${readonly?'disabled':''}>${escapeHtml(n.content)}</textarea></div>
+      <div class="field"><label>标签（逗号分隔）</label><input id="f_tags" value="${escapeHtml((n.tags||[]).join(','))}" placeholder="如:重点,公式,需复习" ${readonly?'disabled':''}></div>
+    `;
+    const foot = readonly
+      ? `<button class="btn ghost" onclick="closeModal()">关闭</button>`
+      : `<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.learn._saveNote('${n.id||''}')">保存</button>`;
+    openModal(readonly?'📖 查看笔记':(isEdit?'编辑笔记':'写学习笔记'), body, foot);
+  },
+  _saveNote(id){
+    const content=$('#f_content').value.trim();
+    if(!content){ toast('笔记内容不能为空'); return; }
+    const tags=$('#f_tags').value.split(/[,，]/).map(t=>t.trim()).filter(Boolean);
+    const data={date:$('#f_date').value,subject:$('#f_subject').value.trim(),title:$('#f_title').value.trim(),content,tags};
+    const list=DB.get('learn_note',[]);
+    if(id){ const n=list.find(x=>x.id===id); Object.assign(n,data); } else { list.push({id:uid(),...data,createdAt:Date.now()}); }
+    DB.set('learn_note',list); closeModal(); this.render(); toast('笔记已保存');
+  },
+  /* 错题本 */
+  wrong(){
+    const list=DB.get('learn_wrong',[]).sort((a,b)=>b.date.localeCompare(a.date));
+    const undone=list.filter(w=>!w.mastered).length;
+    let html=`<div class="stat-grid">
+      <div class="stat-card balance"><div class="label">错题总数</div><div class="num">${list.length}</div></div>
+      <div class="stat-card expense"><div class="label">待复习</div><div class="num">${undone}</div></div>
+      <div class="stat-card income"><div class="label">已掌握</div><div class="num">${list.length-undone}</div></div>
+    </div>`;
+    html+=`<button class="btn primary block" onclick="Pages.learn.addWrong()" style="margin-bottom:14px">＋ 添加错题</button>`;
+    if(list.length===0) html+=`<div class="card"><div class="empty"><span class="big">❌</span>还没有错题，遇到错题就来记录吧～</div></div>`;
+    list.forEach(w=>{
+      html+=`<div class="card ${w.mastered?'mint':'yellow'}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="flex:1">
+            <div style="font-weight:700">${escapeHtml(w.subject||'')} ${w.mastered?'<span class="ai-badge" style="background:var(--mint);color:var(--mint-d)">✅ 已掌握</span>':'<span class="ai-badge">待复习</span>'}</div>
+            <div class="li-sub">${fmtFull(w.date)} · ${escapeHtml(w.type||'')}</div>
+            <div style="margin:6px 0;padding:8px;background:#FFF;border-radius:8px;font-size:13px"><b>题：</b>${escapeHtml(w.question||'')}</div>
+            ${w.answer?`<div style="padding:6px 8px;background:var(--mint);border-radius:8px;font-size:13px;margin-bottom:4px"><b>答：</b>${escapeHtml(w.answer)}</div>`:''}
+            ${w.analysis?`<div style="padding:6px 8px;background:#FFF;border-radius:8px;font-size:13px;color:var(--ink-soft)"><b>析：</b>${escapeHtml(w.analysis)}</div>`:''}
+          </div>
+          <div class="li-actions">
+            <button class="icon-btn" onclick="Pages.learn.editWrong('${w.id}')">✏️</button>
+            <button class="icon-btn" onclick="Pages.learn.toggleWrong('${w.id}')">${w.mastered?'↩️':'✅'}</button>
+            <button class="icon-btn" onclick="Pages.learn.delWrong('${w.id}')">🗑️</button>
+          </div>
+        </div>
+      </div>`;
+    });
+    return html;
+  },
+  addWrong(){ this._wrongForm(); },
+  editWrong(id){ const w=DB.get('learn_wrong',[]).find(x=>x.id===id); if(w) this._wrongForm(w); },
+  delWrong(id){ if(!confirm('删除这道错题？')) return; DB.set('learn_wrong',DB.get('learn_wrong',[]).filter(x=>x.id!==id)); this.render(); toast('已删除'); },
+  toggleWrong(id){ const w=DB.get('learn_wrong',[]).find(x=>x.id===id); if(w){ w.mastered=!w.mastered; DB.set('learn_wrong',DB.get('learn_wrong',[])); this.render(); toast(w.mastered?'标记为已掌握':'已标记为待复习'); } },
+  _wrongForm(w){
+    const isEdit=!!w; w=w||{date:todayStr(),subject:'',type:'选择题',question:'',answer:'',analysis:'',mastered:false};
+    const courses=DB.get('learn_course',[]).map(c=>c.name);
+    const types=['选择题','填空题','判断题','简答题','计算题','编程题','其他'];
+    const body=`
+      <div class="row-2">
+        <div class="field"><label>科目</label><input id="f_subject" value="${escapeHtml(w.subject||'')}" placeholder="如 高数、英语" list="courseList2"></div>
+        <datalist id="courseList2">${courses.map(c=>`<option value="${escapeHtml(c)}">`).join('')}</datalist>
+        <div class="field"><label>题型</label>
+          <select id="f_type">${types.map(t=>`<option ${w.type===t?'selected':''}>${t}</option>`).join('')}</select>
+        </div>
+      </div>
+      <div class="field"><label>日期</label><input type="date" id="f_date" value="${w.date}"></div>
+      <div class="field"><label>题目</label><textarea id="f_question" rows="3" placeholder="录入题目内容...">${escapeHtml(w.question||'')}</textarea></div>
+      <div class="field"><label>正确答案</label><textarea id="f_answer" rows="2" placeholder="可选">${escapeHtml(w.answer||'')}</textarea></div>
+      <div class="field"><label>解析/错因</label><textarea id="f_analysis" rows="3" placeholder="为什么错、考点是什么...">${escapeHtml(w.analysis||'')}</textarea></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.learn._saveWrong('${w.id||''}')">${isEdit?'保存':'添加'}</button>`;
+    openModal(isEdit?'编辑错题':'添加错题', body, foot);
+  },
+  _saveWrong(id){
+    const q=$('#f_question').value.trim();
+    if(!q){ toast('请输入题目'); return; }
+    const data={subject:$('#f_subject').value.trim(),type:$('#f_type').value,date:$('#f_date').value,question:q,answer:$('#f_answer').value.trim(),analysis:$('#f_analysis').value.trim()};
+    const list=DB.get('learn_wrong',[]);
+    if(id){ const w=list.find(x=>x.id===id); Object.assign(w,data); } else { list.push({id:uid(),...data,mastered:false,createdAt:Date.now()}); }
+    DB.set('learn_wrong',list); closeModal(); this.render(); toast('已保存');
+  }
+};
+
+/* ---------- 7. 经期记录 ---------- */
+Pages.period = {
+  render(){
+    const list=DB.get('period',[]).sort((a,b)=>b.startDate.localeCompare(a.startDate));
+    let html=`<div class="page-head">
+      <h2>🌺 经期记录 <span class="sub">关爱自己每一天</span></h2>
+      <button class="btn primary" onclick="Pages.period.add()">＋ 记录经期</button>
+    </div>`;
+
+    // 预测
+    if(list.length>=1){
+      const last=list[0];
+      const avgCycle=this.avgCycle(list);
+      const nextStart=new Date(last.startDate); nextStart.setDate(nextStart.getDate()+avgCycle);
+      const days=Math.round((nextStart-new Date(todayStr()))/86400000);
+      html+=`<div class="card pink"><div class="section-title">🔮 下次预测</div>
+        <div style="text-align:center;padding:8px">
+          <div style="font-size:13px;color:var(--ink-soft)">预计下次经期</div>
+          <div style="font-size:20px;font-weight:800;color:var(--pink-4)">${fmtFull(nextStart.toISOString().slice(0,10))}</div>
+          <div style="margin-top:4px">${days>0?`<span class="count-badge count-soon">还有 ${days} 天</span>`:`<span class="count-badge count-today">已到/已过</span>`}</div>
+          <div style="font-size:12px;color:var(--ink-soft);margin-top:6px">平均周期 ${avgCycle}天</div>
+        </div></div>`;
+    }
+
+    // 月历标记
+    const y=Pages.schedule.curDate.getFullYear?Pages.schedule.curDate.getFullYear():new Date().getFullYear();
+    // 用独立月历状态
+    if(!this._cal) this._cal=new Date();
+    const cy=this._cal.getFullYear(), cm=this._cal.getMonth();
+    const marks={};
+    list.forEach(p=>{
+      let d=new Date(p.startDate), end=new Date(p.endDate||p.startDate);
+      while(d<=end){ (marks[d.toISOString().slice(0,10)]=marks[d.toISOString().slice(0,10)]||[]).push({type:'period'}); d.setDate(d.getDate()+1); }
+    });
+    html+=`<div id="calWrap">${buildCalendar(cy,cm,marks)}</div>`;
+
+    // 列表
+    html+=`<div class="card"><div class="section-title">📋 历史记录</div>`;
+    if(list.length===0) html+='<div class="empty"><span class="big">🌷</span>还没有记录，开始记录第一次吧～</div>';
+    list.forEach((p,i)=>{
+      const len=p.endDate?Math.round((new Date(p.endDate)-new Date(p.startDate))/86400000)+1:1;
+      const cycle = i<list.length-1 ? Math.round((new Date(p.startDate)-new Date(list[i+1].startDate))/86400000) : null;
+      html+=`<div class="list-item">
+        <span style="font-size:20px">${p.flow==='多'?'🔴':p.flow==='中'?'🟠':'🟡'}</span>
+        <div style="flex:1">
+          <div class="li-title">${fmtFull(p.startDate)} ${p.endDate?'→ '+fmtDate(p.endDate):''}</div>
+          <div class="li-sub">流量：${p.flow||'中'} · ${len}天 ${cycle?'· 周期'+cycle+'天':''} ${p.symptoms&&p.symptoms.length?'· '+p.symptoms.join('/'):''}</div>
+          ${p.note?`<div class="li-sub" style="margin-top:2px">${escapeHtml(p.note)}</div>`:''}
+        </div>
+        <div class="li-actions">
+          <button class="icon-btn" onclick="Pages.period.edit('${p.id}')">✏️</button>
+          <button class="icon-btn" onclick="Pages.period.del('${p.id}')">🗑️</button>
+        </div></div>`;
+    });
+    html+='</div>';
+
+    $('#main').innerHTML=html;
+    $('#calPrev').onclick=()=>{ this._cal=new Date(cy,cm-1,1); this.render(); };
+    $('#calNext').onclick=()=>{ this._cal=new Date(cy,cm+1,1); this.render(); };
+  },
+  avgCycle(list){
+    if(list.length<2) return 28;
+    const sorted=[...list].sort((a,b)=>a.startDate.localeCompare(b.startDate));
+    let gaps=[];
+    for(let i=1;i<sorted.length;i++) gaps.push(Math.round((new Date(sorted[i].startDate)-new Date(sorted[i-1].startDate))/86400000));
+    return Math.round(gaps.reduce((s,x)=>s+x,0)/gaps.length);
+  },
+  add(){ this._form(); },
+  edit(id){ const p=DB.get('period',[]).find(x=>x.id===id); if(p) this._form(p); },
+  del(id){ if(!confirm('删除这条记录？')) return; DB.set('period',DB.get('period',[]).filter(x=>x.id!==id)); this.render(); toast('已删除'); },
+  _form(p){
+    const isEdit=!!p; p=p||{startDate:todayStr(),endDate:'',flow:'中',symptoms:[],note:''};
+    const syms=['痛经','腰酸','情绪波动','疲劳','头痛','腹胀','长痘','食欲变化'];
+    const body=`
+      <div class="row-2">
+        <div class="field"><label>开始日期</label><input type="date" id="f_start" value="${p.startDate}"></div>
+        <div class="field"><label>结束日期（可选）</label><input type="date" id="f_end" value="${p.endDate||''}"></div>
+      </div>
+      <div class="field"><label>流量</label>
+        <div class="chip-group" id="flowGroup">${['少','中','多'].map(f=>`<button class="chip ${p.flow===f?'on':''}" data-v="${f}">${f==='少'?'🟡':f==='中'?'🟠':'🔴'} ${f}</button>`).join('')}</div>
+      </div>
+      <div class="field"><label>症状（多选）</label>
+        <div class="chip-group" id="symGroup">${syms.map(s=>`<button class="chip ${(p.symptoms||[]).includes(s)?'on':''}" data-v="${s}">${s}</button>`).join('')}</div>
+      </div>
+      <div class="field"><label>备注</label><input id="f_note" value="${escapeHtml(p.note||'')}"></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.period._save('${p.id||''}')">${isEdit?'保存':'记录'}</button>`;
+    openModal(isEdit?'编辑经期':'记录经期', body, foot);
+    let flow=p.flow, syms2=[...(p.symptoms||[])];
+    $$('#flowGroup .chip').forEach(c=>c.onclick=()=>{ flow=c.dataset.v; $$('#flowGroup .chip').forEach(x=>x.classList.toggle('on',x===c)); });
+    $$('#symGroup .chip').forEach(c=>c.onclick=()=>{ const v=c.dataset.v; if(syms2.includes(v)) syms2=syms2.filter(x=>x!==v); else syms2.push(v); c.classList.toggle('on'); });
+    this._cur={flow,syms:syms2};
+  },
+  _save(id){
+    const start=$('#f_start').value; if(!start){ toast('请选择开始日期'); return; }
+    const end=$('#f_end').value;
+    const data={startDate:start, endDate:end, flow:this._cur.flow, symptoms:this._cur.syms, note:$('#f_note').value.trim()};
+    const list=DB.get('period',[]);
+    if(id){ const p=list.find(x=>x.id===id); Object.assign(p,data); } else { list.push({id:uid(),...data,createdAt:Date.now()}); }
+    DB.set('period',list); closeModal(); this.render(); toast('已保存');
+  }
+};
+
+/* ---------- 3. 减脂记录 ---------- */
+Pages.fit = {
+  tab:'exercise',
+  render(){
+    let html=`<div class="page-head">
+      <h2>🏃 减脂记录 <span class="sub">健康每一天</span></h2>
+    </div>`;
+    html+=`<div class="tabs">
+      <button class="tab ${this.tab==='exercise'?'on':''}" onclick="Pages.fit.tab='exercise';Pages.fit.render()">🏃 运动记录</button>
+      <button class="tab ${this.tab==='weight'?'on':''}" onclick="Pages.fit.tab='weight';Pages.fit.render()">⚖️ 体重体脂</button>
+      <button class="tab ${this.tab==='diet'?'on':''}" onclick="Pages.fit.tab='diet';Pages.fit.render()">🥗 饮食记录</button>
+    </div>`;
+    if(this.tab==='exercise') html+=this.exercise();
+    else if(this.tab==='weight') html+=this.weight();
+    else html+=this.diet();
+    $('#main').innerHTML=html;
+  },
+  /* 运动 */
+  exercise(){
+    const list=DB.get('fit_exercise',[]).sort((a,b)=>b.date.localeCompare(a.date));
+    const week=list.filter(e=>{ const d=new Date(e.date); const w=new Date(); w.setDate(w.getDate()-7); return d>=w; });
+    const totalCal=week.reduce((s,e)=>s+(e.calories||0),0);
+    const totalMin=week.reduce((s,e)=>s+(e.duration||0),0);
+    let html=`<div class="stat-grid">
+      <div class="stat-card expense"><div class="label">本周运动时长</div><div class="num">${totalMin}分</div></div>
+      <div class="stat-card income"><div class="label">本周消耗</div><div class="num">${totalCal}卡</div></div>
+      <div class="stat-card balance"><div class="label">本周次数</div><div class="num">${week.length}次</div></div>
+    </div>`;
+    html+=`<button class="btn primary block" onclick="Pages.fit.addExercise()" style="margin-bottom:14px">＋ 添加运动记录（可上传照片AI识别）</button>`;
+    if(list.length===0) html+=`<div class="card"><div class="empty"><span class="big">🏅</span>还没有运动记录</div></div>`;
+    list.forEach(e=>{
+      html+=`<div class="card mint">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="font-weight:700;color:var(--ink)">${e.type||'运动'} · ${e.duration||0}分钟</div>
+            <div class="li-sub">${fmtFull(e.date)} · 消耗 ${e.calories||0}卡 · ${e.intensity||''}强度</div>
+            ${e.note?`<div class="li-sub" style="margin-top:3px">${escapeHtml(e.note)}</div>`:''}
+          </div>
+          <div class="li-actions">
+            <button class="icon-btn" onclick="Pages.fit.editExercise('${e.id}')">✏️</button>
+            <button class="icon-btn" onclick="Pages.fit.delExercise('${e.id}')">🗑️</button>
+          </div>
+        </div>
+        ${e.photo?`<img src="${e.photo}" class="photo-preview" style="margin-top:8px">`:''}
+      </div>`;
+    });
+    return html;
+  },
+  addExercise(){ this._exerciseForm(); },
+  editExercise(id){ const e=DB.get('fit_exercise',[]).find(x=>x.id===id); if(e) this._exerciseForm(e); },
+  delExercise(id){ if(!confirm('删除？')) return; DB.set('fit_exercise',DB.get('fit_exercise',[]).filter(x=>x.id!==id)); this.render(); },
+  _exerciseForm(e){
+    const isEdit=!!e; e=e||{date:todayStr(),type:'',duration:'',calories:'',intensity:'中',note:'',photo:''};
+    const types=['跑步','快走','瑜伽','力量训练','骑行','游泳','跳绳','HIIT','舞蹈','羽毛球','其他'];
+    const body=`
+      <div class="field"><label>上传运动照片（AI自动识别）</label>
+        <div class="upload-area" id="upArea"><span class="big">📸</span>点击选择照片<br><span style="font-size:11px">AI会识别运动类型和时长</span></div>
+        <input type="file" accept="image/*" id="f_photo" class="hidden">
+        <img id="f_preview" class="photo-preview hidden">
+        <div id="aiArea" style="margin-top:8px"></div>
+      </div>
+      <div class="row-2">
+        <div class="field"><label>运动类型</label>
+          <select id="f_type">${types.map(t=>`<option ${e.type===t?'selected':''}>${t}</option>`).join('')}</select>
+        </div>
+        <div class="field"><label>强度</label>
+          <div class="chip-group" id="intGroup">${['低','中','高'].map(i=>`<button class="chip ${e.intensity===i?'on':''}" data-v="${i}">${i}</button>`).join('')}</div>
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="field"><label>时长(分钟)</label><input type="number" id="f_dur" value="${e.duration}" placeholder="30"></div>
+        <div class="field"><label>消耗(卡)</label><input type="number" id="f_cal" value="${e.calories}" placeholder="200"></div>
+      </div>
+      <div class="field"><label>日期</label><input type="date" id="f_date" value="${e.date}"></div>
+      <div class="field"><label>备注</label><input id="f_note" value="${escapeHtml(e.note||'')}"></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.fit._saveExercise('${e.id||''}')">${isEdit?'保存':'添加'}</button>`;
+    openModal(isEdit?'编辑运动':'添加运动', body, foot);
+    let intensity=e.intensity;
+    $$('#intGroup .chip').forEach(c=>c.onclick=()=>{ intensity=c.dataset.v; $$('#intGroup .chip').forEach(x=>x.classList.toggle('on',x===c)); });
+    this._curInt=intensity; this._photo=e.photo||'';
+    this._bindPhoto('f_photo','upArea','f_preview','aiArea','exercise');
+  },
+  _saveExercise(id){
+    const data={type:$('#f_type').value,duration:parseInt($('#f_dur').value)||0,calories:parseInt($('#f_cal').value)||0,intensity:this._curInt,date:$('#f_date').value,note:$('#f_note').value.trim(),photo:this._photo};
+    const list=DB.get('fit_exercise',[]);
+    if(id){ const e=list.find(x=>x.id===id); Object.assign(e,data); } else { list.push({id:uid(),...data,createdAt:Date.now()}); }
+    DB.set('fit_exercise',list); closeModal(); this.render(); toast('已保存');
+  },
+  /* 体重 */
+  weight(){
+    const list=DB.get('fit_weight',[]).sort((a,b)=>a.date.localeCompare(b.date));
+    let html=`<button class="btn primary block" onclick="Pages.fit.addWeight()" style="margin-bottom:14px">＋ 记录体重体脂</button>`;
+    if(list.length===0) return html+`<div class="card"><div class="empty"><span class="big">⚖️</span>还没有记录</div></div>`;
+    const last=list[list.length-1];
+    html+=`<div class="stat-grid">
+      <div class="stat-card balance"><div class="label">最新体重</div><div class="num">${last.weight||'-'}</div></div>
+      <div class="stat-card expense"><div class="label">最新体脂率</div><div class="num">${last.bodyfat||'-'}%</div></div>
+      <div class="stat-card income"><div class="label">肌肉量</div><div class="num">${last.muscle||'-'}</div></div>
+    </div>`;
+    // 折线图
+    if(list.length>=2){
+      html+=`<div class="chart-box"><canvas id="wChart" height="200"></canvas></div>`;
+      setTimeout(()=>this._drawChart(list),50);
+    }
+    html+=`<div class="card"><div class="section-title">📋 记录列表</div>`;
+    [...list].reverse().forEach(w=>{
+      html+=`<div class="list-item">
+        <div style="flex:1">
+          <div class="li-title">${fmtFull(w.date)}</div>
+          <div class="li-sub">${w.weight}kg · 体脂${w.bodyfat||'-'}% · 肌肉${w.muscle||'-'}</div>
+          ${w.note?`<div class="li-sub">${escapeHtml(w.note)}</div>`:''}
+        </div>
+        <div class="li-actions">
+          <button class="icon-btn" onclick="Pages.fit.editWeight('${w.id}')">✏️</button>
+          <button class="icon-btn" onclick="Pages.fit.delWeight('${w.id}')">🗑️</button>
+        </div></div>`;
+    });
+    html+='</div>';
+    return html;
+  },
+  _drawChart(list){
+    const c=$('#wChart'); if(!c) return;
+    const dpr=window.devicePixelRatio||1;
+    const w=c.offsetWidth, h=200;
+    c.width=w*dpr; c.height=h*dpr; c.getContext('2d').scale(dpr,dpr);
+    const ctx=c.getContext('2d');
+    const weights=list.map(x=>parseFloat(x.weight)).filter(x=>!isNaN(x));
+    if(weights.length<2) return;
+    const min=Math.min(...weights)-1, max=Math.max(...weights)+1;
+    const pad=30;
+    ctx.clearRect(0,0,w,h);
+    // 网格
+    ctx.strokeStyle='#FFE4EC'; ctx.lineWidth=1;
+    for(let i=0;i<=4;i++){ const y=pad+(h-pad*2)*i/4; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(w-pad,y); ctx.stroke(); }
+    // 折线
+    ctx.strokeStyle='#F48FB1'; ctx.lineWidth=2.5; ctx.beginPath();
+    list.forEach((d,i)=>{
+      const x=pad+(w-pad*2)*i/(list.length-1);
+      const wt=parseFloat(d.weight); if(isNaN(wt)) return;
+      const y=pad+(h-pad*2)*(1-(wt-min)/(max-min));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+    // 点
+    ctx.fillStyle='#EC407A';
+    list.forEach((d,i)=>{
+      const x=pad+(w-pad*2)*i/(list.length-1);
+      const wt=parseFloat(d.weight); if(isNaN(wt)) return;
+      const y=pad+(h-pad*2)*(1-(wt-min)/(max-min));
+      ctx.beginPath(); ctx.arc(x,y,4,0,7); ctx.fill();
+    });
+    // 标签
+    ctx.fillStyle='#8D6E63'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+    list.forEach((d,i)=>{
+      if(i%Math.ceil(list.length/6)===0 || i===list.length-1){
+        const x=pad+(w-pad*2)*i/(list.length-1);
+        ctx.fillText(`${parseInt(d.date.slice(5))}`,x,h-8);
+      }
+    });
+    ctx.textAlign='right';
+    ctx.fillText(max.toFixed(1),pad-4,pad+4);
+    ctx.fillText(min.toFixed(1),pad-4,h-pad);
+  },
+  addWeight(){ this._weightForm(); },
+  editWeight(id){ const w=DB.get('fit_weight',[]).find(x=>x.id===id); if(w) this._weightForm(w); },
+  delWeight(id){ if(!confirm('删除？')) return; DB.set('fit_weight',DB.get('fit_weight',[]).filter(x=>x.id!==id)); this.render(); },
+  _weightForm(w){
+    const isEdit=!!w; w=w||{date:todayStr(),weight:'',bodyfat:'',muscle:'',note:''};
+    const body=`
+      <div class="row-3">
+        <div class="field"><label>体重(kg)</label><input type="number" step="0.1" id="f_w" value="${w.weight}"></div>
+        <div class="field"><label>体脂率(%)</label><input type="number" step="0.1" id="f_bf" value="${w.bodyfat}"></div>
+        <div class="field"><label>肌肉量(kg)</label><input type="number" step="0.1" id="f_m" value="${w.muscle}"></div>
+      </div>
+      <div class="field"><label>日期</label><input type="date" id="f_date" value="${w.date}"></div>
+      <div class="field"><label>备注</label><input id="f_note" value="${escapeHtml(w.note||'')}"></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.fit._saveWeight('${w.id||''}')">${isEdit?'保存':'添加'}</button>`;
+    openModal(isEdit?'编辑体重':'记录体重', body, foot);
+  },
+  _saveWeight(id){
+    const w=parseFloat($('#f_w').value);
+    if(!w){ toast('请输入体重'); return; }
+    const data={weight:w, bodyfat:$('#f_bf').value, muscle:$('#f_m').value, date:$('#f_date').value, note:$('#f_note').value.trim()};
+    const list=DB.get('fit_weight',[]);
+    if(id){ const x=list.find(x=>x.id===id); Object.assign(x,data); } else { list.push({id:uid(),...data,createdAt:Date.now()}); }
+    DB.set('fit_weight',list); closeModal(); this.render(); toast('已保存');
+  },
+  /* 饮食 */
+  diet(){
+    const list=DB.get('fit_diet',[]).sort((a,b)=>b.date.localeCompare(a.date));
+    const todayList=list.filter(d=>d.date===todayStr());
+    const todayCal=todayList.reduce((s,d)=>s+(d.calories||0),0);
+    let html=`<div class="stat-grid">
+      <div class="stat-card expense"><div class="label">今日摄入</div><div class="num">${todayCal}卡</div></div>
+      <div class="stat-card income"><div class="label">今日记录</div><div class="num">${todayList.length}餐</div></div>
+      <div class="stat-card balance"><div class="label">建议摄入</div><div class="num">~1800卡</div></div>
+    </div>`;
+    html+=`<button class="btn primary block" onclick="Pages.fit.addDiet()" style="margin-bottom:14px">＋ 添加饮食记录（可上传照片AI算热量）</button>`;
+    if(list.length===0) html+=`<div class="card"><div class="empty"><span class="big">🥗</span>还没有记录</div></div>`;
+    list.forEach(d=>{
+      html+=`<div class="card yellow">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="font-weight:700">${d.meal} · ${escapeHtml(d.food||'')}</div>
+            <div class="li-sub">${fmtFull(d.date)} · ${d.calories||0}卡 ${d.portion?'· '+escapeHtml(d.portion):''}</div>
+            ${d.note?`<div class="li-sub" style="margin-top:3px">${escapeHtml(d.note)}</div>`:''}
+          </div>
+          <div class="li-actions">
+            <button class="icon-btn" onclick="Pages.fit.editDiet('${d.id}')">✏️</button>
+            <button class="icon-btn" onclick="Pages.fit.delDiet('${d.id}')">🗑️</button>
+          </div>
+        </div>
+        ${d.photo?`<img src="${d.photo}" class="photo-preview" style="margin-top:8px">`:''}
+      </div>`;
+    });
+    return html;
+  },
+  addDiet(){ this._dietForm(); },
+  editDiet(id){ const d=DB.get('fit_diet',[]).find(x=>x.id===id); if(d) this._dietForm(d); },
+  delDiet(id){ if(!confirm('删除？')) return; DB.set('fit_diet',DB.get('fit_diet',[]).filter(x=>x.id!==id)); this.render(); },
+  _dietForm(d){
+    const isEdit=!!d; d=d||{date:todayStr(),meal:'早餐',food:'',portion:'',calories:'',note:'',photo:''};
+    const body=`
+      <div class="field"><label>上传食物照片（AI自动算热量）</label>
+        <div class="upload-area" id="upArea"><span class="big">🍱</span>点击选择食物照片<br><span style="font-size:11px">AI会识别食物并估算热量</span></div>
+        <input type="file" accept="image/*" id="f_photo" class="hidden">
+        <img id="f_preview" class="photo-preview hidden">
+        <div id="aiArea" style="margin-top:8px"></div>
+      </div>
+      <div class="row-2">
+        <div class="field"><label>餐次</label>
+          <div class="chip-group" id="mealGroup">${['早餐','午餐','晚餐','加餐'].map(m=>`<button class="chip ${d.meal===m?'on':''}" data-v="${m}">${m}</button>`).join('')}</div>
+        </div>
+        <div class="field"><label>热量(卡)</label><input type="number" id="f_cal" value="${d.calories}" placeholder="300"></div>
+      </div>
+      <div class="field"><label>食物</label><input id="f_food" value="${escapeHtml(d.food)}" placeholder="比如：米饭、鸡胸肉、西兰花"></div>
+      <div class="field"><label>份量</label><input id="f_portion" value="${escapeHtml(d.portion||'')}" placeholder="比如：一碗、200g"></div>
+      <div class="field"><label>日期</label><input type="date" id="f_date" value="${d.date}"></div>
+      <div class="field"><label>备注</label><input id="f_note" value="${escapeHtml(d.note||'')}"></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.fit._saveDiet('${d.id||''}')">${isEdit?'保存':'添加'}</button>`;
+    openModal(isEdit?'编辑饮食':'添加饮食', body, foot);
+    let meal=d.meal;
+    $$('#mealGroup .chip').forEach(c=>c.onclick=()=>{ meal=c.dataset.v; $$('#mealGroup .chip').forEach(x=>x.classList.toggle('on',x===c)); });
+    this._curMeal=meal; this._photo=d.photo||'';
+    this._bindPhoto('f_photo','upArea','f_preview','aiArea','diet');
+  },
+  _saveDiet(id){
+    const data={meal:this._curMeal,food:$('#f_food').value.trim(),portion:$('#f_portion').value.trim(),calories:parseInt($('#f_cal').value)||0,date:$('#f_date').value,note:$('#f_note').value.trim(),photo:this._photo};
+    const list=DB.get('fit_diet',[]);
+    if(id){ const d=list.find(x=>x.id===id); Object.assign(d,data); } else { list.push({id:uid(),...data,createdAt:Date.now()}); }
+    DB.set('fit_diet',list); closeModal(); this.render(); toast('已保存');
+  },
+  /* 照片上传 + AI 识别 */
+  _bindPhoto(inputId,upId,prevId,aiId,mode){
+    const inp=$('#'+inputId), up=$('#'+upId), prev=$('#'+prevId), ai=$('#'+aiId);
+    up.onclick=()=>inp.click();
+    inp.onchange=()=>{
+      const f=inp.files[0]; if(!f) return;
+      const reader=new FileReader();
+      reader.onload=async()=>{
+        prev.src=reader.result; prev.classList.remove('hidden'); up.classList.add('hidden');
+        this._photo=reader.result;
+        // AI 识别
+        await this._aiRecognize(reader.result, ai, mode);
+      };
+      reader.readAsDataURL(f);
+    };
+    if(this._photo){ prev.src=this._photo; prev.classList.remove('hidden'); up.classList.add('hidden'); }
+  },
+  async _aiRecognize(base64, aiEl, mode){
+    const cfg=DB.get('ai_config',{});
+    if(!cfg.key){
+      aiEl.innerHTML=`<div class="ai-badge">⚠️ 未配置AI</div><div style="font-size:12px;color:var(--ink-soft);margin-top:4px">前往「设置」配置多模态API Key后可自动识别。当前请手动填写。</div>`;
+      return;
+    }
+    aiEl.innerHTML=`<div class="ai-loading"><span class="ai-badge">🤖 AI识别中</span> 正在分析${mode==='diet'?'食物热量':'运动'}...</div>`;
+    try{
+      const base64Data=base64.split(',')[1];
+      const prompt = mode==='diet'
+        ? '请分析这张食物照片，返回JSON格式：{"food":"食物名称","calories":估算总卡路里数字,"portion":"份量描述"}。只返回JSON。'
+        : '请分析这张运动/健身照片，返回JSON格式：{"type":"运动类型","duration":预估时长分钟数字,"calories":预估消耗卡路里数字,"intensity":"低/中/高"}。只返回JSON。';
+      const res=await fetch(cfg.url||'https://api.openai.com/v1/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
+        body:JSON.stringify({
+          model: cfg.model||'gpt-4o-mini',
+          messages:[{role:'user',content:[
+            {type:'text',text:prompt},
+            {type:'image_url',image_url:{url:base64}}
+          ]}],
+          max_tokens:300
+        })
+      });
+      const data=await res.json();
+      if(data.error) throw new Error(data.error.message||'API错误');
+      const txt=data.choices[0].message.content;
+      const m=txt.match(/\{[\s\S]*\}/);
+      if(m){
+        const obj=JSON.parse(m[0]);
+        // 填入表单
+        if(mode==='diet'){
+          if(obj.food) $('#f_food').value=obj.food;
+          if(obj.calories) $('#f_cal').value=obj.calories;
+          if(obj.portion) $('#f_portion').value=obj.portion;
+        } else {
+          if(obj.type){ const sel=$('#f_type'); for(const opt of sel.options){ if(opt.text.includes(obj.type)||obj.type.includes(opt.text)){ opt.selected=true; break; } } }
+          if(obj.duration) $('#f_dur').value=obj.duration;
+          if(obj.calories) $('#f_cal').value=obj.calories;
+          if(obj.intensity){ $$('#intGroup .chip').forEach(c=>c.classList.toggle('on',c.dataset.v===obj.intensity)); this._curInt=obj.intensity; }
+        }
+        aiEl.innerHTML=`<div class="ai-badge">✅ AI识别完成</div><div style="font-size:12px;color:var(--ink-soft);margin-top:4px">已自动填入，请核对后保存</div>`;
+      } else throw new Error('未识别到结果');
+    }catch(e){
+      aiEl.innerHTML=`<div class="ai-badge">❌ 识别失败</div><div style="font-size:12px;color:#E53935;margin-top:4px">${escapeHtml(e.message)}。请手动填写。</div>`;
+    }
+  }
+};
+
+/* ---------- 8. 阅读口语 ---------- */
+Pages.study = {
+  tab:'read',
+  render(){
+    let html=`<div class="page-head">
+      <h2>📚 阅读口语 <span class="sub">每天进步一点点</span></h2>
+    </div>`;
+    html+=`<div class="tabs">
+      <button class="tab ${this.tab==='read'?'on':''}" onclick="Pages.study.tab='read';Pages.study.render()">📖 阅读计划</button>
+      <button class="tab ${this.tab==='speak'?'on':''}" onclick="Pages.study.tab='speak';Pages.study.render()">🗣️ 口语练习</button>
+    </div>`;
+    html += this.tab==='read' ? this.read() : this.speak();
+    $('#main').innerHTML=html;
+  },
+  read(){
+    const stages=DB.get('study_stages',[]);
+    let html=`<button class="btn primary block" onclick="Pages.study.addStage()" style="margin-bottom:14px">＋ 新建阅读阶段</button>`;
+    if(stages.length===0) html+=`<div class="card"><div class="empty"><span class="big">📚</span>还没有阅读计划</div></div>`;
+    stages.forEach(s=>{
+      const books=s.books||[];
+      const done=books.filter(b=>b.status==='读完').length;
+      const pct=books.length?Math.round(done/books.length*100):0;
+      html+=`<div class="card purple">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:16px;color:var(--pink-4)">${escapeHtml(s.name)}</div>
+            <div class="li-sub">${s.startDate||'?'} → ${s.endDate||'?'} · 目标：${escapeHtml(s.goal||'')}</div>
+            <div style="margin:8px 0"><div style="background:#FFE4EC;border-radius:8px;height:8px;overflow:hidden"><div style="width:${pct}%;height:100%;background:var(--pink-3)"></div></div><div style="font-size:11px;color:var(--ink-soft);margin-top:2px">${done}/${books.length}本 · ${pct}%</div></div>
+          </div>
+          <div class="li-actions">
+            <button class="icon-btn" onclick="Pages.study.editStage('${s.id}')">✏️</button>
+            <button class="icon-btn" onclick="Pages.study.delStage('${s.id}')">🗑️</button>
+          </div>
+        </div>
+        ${books.length?`<div style="margin-top:8px"><b style="font-size:13px">书单：</b>${books.map(b=>`<span style="font-size:12px;background:#FFF;padding:3px 8px;border-radius:10px;margin:2px;display:inline-block;border:1px solid var(--pink-1)">${b.status==='读完'?'✅':b.status==='在读'?'📖':'⏸️'} ${escapeHtml(b.title)} ${b.progress?'('+b.progress+'%)':''}</span>`).join('')}</div>`:''}
+        ${s.note?`<div class="li-sub" style="margin-top:6px">${escapeHtml(s.note)}</div>`:''}
+      </div>`;
+    });
+    return html;
+  },
+  addStage(){ this._stageForm(); },
+  editStage(id){ const s=DB.get('study_stages',[]).find(x=>x.id===id); if(s) this._stageForm(s); },
+  delStage(id){ if(!confirm('删除这个阶段？')) return; DB.set('study_stages',DB.get('study_stages',[]).filter(x=>x.id!==id)); this.render(); },
+  _stageForm(s){
+    const isEdit=!!s; s=s||{name:'',goal:'',startDate:todayStr(),endDate:'',books:[],note:''};
+    const body=`
+      <div class="field"><label>阶段名称</label><input id="f_name" value="${escapeHtml(s.name)}" placeholder="比如：2026春季阅读计划"></div>
+      <div class="field"><label>目标</label><input id="f_goal" value="${escapeHtml(s.goal)}" placeholder="比如：读完5本书"></div>
+      <div class="row-2">
+        <div class="field"><label>开始日期</label><input type="date" id="f_start" value="${s.startDate}"></div>
+        <div class="field"><label>结束日期</label><input type="date" id="f_end" value="${s.endDate||''}"></div>
+      </div>
+      <div class="field"><label>书单</label>
+        <div id="bookList"></div>
+        <button class="btn ghost sm" onclick="Pages.study._addBookRow()" style="margin-top:6px">＋ 添加书</button>
+      </div>
+      <div class="field"><label>备注</label><textarea id="f_note">${escapeHtml(s.note||'')}</textarea></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.study._saveStage('${s.id||''}')">${isEdit?'保存':'添加'}</button>`;
+    openModal(isEdit?'编辑阶段':'新建阶段', body, foot);
+    this._books=[...(s.books||[])];
+    this._renderBookRows();
+  },
+  _addBookRow(){ this._books.push({title:'',status:'在读',progress:''}); this._renderBookRows(); },
+  _renderBookRows(){
+    $('#bookList').innerHTML=this._books.map((b,i)=>`
+      <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">
+        <input placeholder="书名" value="${escapeHtml(b.title)}" oninput="Pages.study._books[${i}].title=this.value" style="flex:1">
+        <select onchange="Pages.study._books[${i}].status=this.value" style="width:80px">
+          ${['在读','读完','弃读'].map(s=>`<option ${b.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+        <input type="number" placeholder="%" value="${b.progress||''}" oninput="Pages.study._books[${i}].progress=this.value" style="width:55px">
+        <button class="icon-btn" onclick="Pages.study._books.splice(${i},1);Pages.study._renderBookRows()">✕</button>
+      </div>`).join('') || '<div style="font-size:12px;color:var(--ink-soft)">还没有添加书</div>';
+  },
+  _saveStage(id){
+    const name=$('#f_name').value.trim();
+    if(!name){ toast('请输入阶段名称'); return; }
+    const data={name,goal:$('#f_goal').value.trim(),startDate:$('#f_start').value,endDate:$('#f_end').value,books:this._books.filter(b=>b.title.trim()),note:$('#f_note').value.trim()};
+    const list=DB.get('study_stages',[]);
+    if(id){ const s=list.find(x=>x.id===id); Object.assign(s,data); } else { list.push({id:uid(),...data,createdAt:Date.now()}); }
+    DB.set('study_stages',list); closeModal(); this.render(); toast('已保存');
+  },
+  speak(){
+    const logs=DB.get('study_speak',[]).sort((a,b)=>b.date.localeCompare(a.date));
+    // 连续打卡
+    const streak=this._streak(logs);
+    const week=logs.filter(l=>{ const d=new Date(l.date); const w=new Date(); w.setDate(w.getDate()-7); return d>=w; });
+    const enWeek=week.filter(l=>l.lang==='英语').length;
+    const krWeek=week.filter(l=>l.lang==='韩语').length;
+    let html=`<div class="stat-grid">
+      <div class="stat-card expense"><div class="label">🔥 连续打卡</div><div class="num">${streak}天</div></div>
+      <div class="stat-card income"><div class="label">本周英语</div><div class="num">${enWeek}次</div></div>
+      <div class="stat-card balance"><div class="label">本周韩语</div><div class="num">${krWeek}次</div></div>
+    </div>`;
+    html+=`<div class="card mint"><div style="font-size:13px;color:var(--ink-soft);text-align:center">🦉 多邻国打卡：连续${streak}天！再接再厉～</div></div>`;
+    html+=`<button class="btn primary block" onclick="Pages.study.addSpeak()" style="margin-bottom:14px">＋ 记录口语练习</button>`;
+    if(logs.length===0) html+=`<div class="card"><div class="empty"><span class="big">🦜</span>还没有练习记录</div></div>`;
+    logs.forEach(l=>{
+      html+=`<div class="list-item">
+        <span style="font-size:20px">${l.lang==='韩语'?'🇰🇷':'🇬🇧'}</span>
+        <div style="flex:1">
+          <div class="li-title">${l.lang} · ${l.duration||0}分钟</div>
+          <div class="li-sub">${fmtFull(l.date)} · 多邻国${l.duo?'已打卡':'未打卡'}</div>
+          ${l.note?`<div class="li-sub">${escapeHtml(l.note)}</div>`:''}
+        </div>
+        <div class="li-actions">
+          <button class="icon-btn" onclick="Pages.study.editSpeak('${l.id}')">✏️</button>
+          <button class="icon-btn" onclick="Pages.study.delSpeak('${l.id}')">🗑️</button>
+        </div></div>`;
+    });
+    return html;
+  },
+  _streak(logs){
+    if(logs.length===0) return 0;
+    const set=new Set(logs.map(l=>l.date));
+    let n=0; let d=new Date();
+    while(set.has(d.toISOString().slice(0,10))){ n++; d.setDate(d.getDate()-1); }
+    return n;
+  },
+  addSpeak(){ this._speakForm(); },
+  editSpeak(id){ const l=DB.get('study_speak',[]).find(x=>x.id===id); if(l) this._speakForm(l); },
+  delSpeak(id){ if(!confirm('删除？')) return; DB.set('study_speak',DB.get('study_speak',[]).filter(x=>x.id!==id)); this.render(); },
+  _speakForm(l){
+    const isEdit=!!l; l=l||{date:todayStr(),lang:'英语',duration:'',duo:true,note:''};
+    const body=`
+      <div class="row-2">
+        <div class="field"><label>语言</label>
+          <div class="chip-group" id="langGroup">${['英语','韩语'].map(g=>`<button class="chip ${l.lang===g?'on':''}" data-v="${g}">${g==='韩语'?'🇰🇷':'🇬🇧'} ${g}</button>`).join('')}</div>
+        </div>
+        <div class="field"><label>时长(分钟)</label><input type="number" id="f_dur" value="${l.duration}" placeholder="15"></div>
+      </div>
+      <div class="field"><label>日期</label><input type="date" id="f_date" value="${l.date}"></div>
+      <div class="field"><label>多邻国打卡</label>
+        <div class="chip-group" id="duoGroup"><button class="chip ${l.duo?'on':''}" data-v="1">✅ 已打卡</button><button class="chip ${!l.duo?'on':''}" data-v="0">未打卡</button></div>
+      </div>
+      <div class="field"><label>心得/素材</label><textarea id="f_note" placeholder="今天练了什么，学到的表达...">${escapeHtml(l.note||'')}</textarea></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.study._saveSpeak('${l.id||''}')">${isEdit?'保存':'添加'}</button>`;
+    openModal(isEdit?'编辑口语':'记录口语', body, foot);
+    let lang=l.lang, duo=l.duo;
+    $$('#langGroup .chip').forEach(c=>c.onclick=()=>{ lang=c.dataset.v; $$('#langGroup .chip').forEach(x=>x.classList.toggle('on',x===c)); });
+    $$('#duoGroup .chip').forEach(c=>c.onclick=()=>{ duo=c.dataset.v==='1'; $$('#duoGroup .chip').forEach(x=>x.classList.toggle('on',x===c)); });
+    this._curS={lang,duo};
+  },
+  _saveSpeak(id){
+    const data={lang:this._curS.lang,duration:parseInt($('#f_dur').value)||0,date:$('#f_date').value,duo:this._curS.duo,note:$('#f_note').value.trim()};
+    const list=DB.get('study_speak',[]);
+    if(id){ const l=list.find(x=>x.id===id); Object.assign(l,data); } else { list.push({id:uid(),...data,createdAt:Date.now()}); }
+    DB.set('study_speak',list); closeModal(); this.render(); toast('已保存');
+  }
+};
+
+/* ---------- 9. 播客 ---------- */
+Pages.podcast = {
+  render(){
+    const list=DB.get('podcast',[]).sort((a,b)=>b.date.localeCompare(a.date));
+    const y=new Date().getFullYear();
+    const mList=list.filter(p=>p.date.slice(0,4)==String(y));
+    const totalMin=mList.reduce((s,p)=>s+(p.duration||0),0);
+    let html=`<div class="page-head">
+      <h2>🎧 播客小宇宙 <span class="sub">听见更大的世界</span></h2>
+      <button class="btn primary" onclick="Pages.podcast.add()">＋ 记录收听</button>
+    </div>`;
+    html+=`<div class="stat-grid">
+      <div class="stat-card income"><div class="label">${y}年累计</div><div class="num">${mList.length}集</div></div>
+      <div class="stat-card balance"><div class="label">总时长</div><div class="num">${Math.round(totalMin/60)}h</div></div>
+      <div class="stat-card expense"><div class="label">节目数</div><div class="num">${new Set(mList.map(p=>p.show)).size}</div></div>
+    </div>`;
+    if(list.length===0) html+=`<div class="card"><div class="empty"><span class="big">🎙️</span>还没有记录，听完一期来记一笔吧～</div></div>`;
+    list.forEach(p=>{
+      html+=`<div class="card purple">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="flex:1">
+            <div style="font-weight:700">${escapeHtml(p.episode||'')}</div>
+            <div class="li-sub">🎙️ ${escapeHtml(p.show||'')} · ${fmtFull(p.date)} · ${p.duration||0}分钟</div>
+            ${p.quote?`<div style="margin-top:6px;padding:8px;background:#FFF;border-radius:10px;border-left:3px solid var(--purple-d);font-size:13px;color:var(--ink)">💭 ${escapeHtml(p.quote)}</div>`:''}
+            ${p.link?`<div style="margin-top:4px"><a href="${escapeHtml(p.link)}" target="_blank" style="font-size:12px">🔗 小宇宙链接</a></div>`:''}
+            ${p.note?`<div class="li-sub" style="margin-top:4px">${escapeHtml(p.note)}</div>`:''}
+          </div>
+          <div class="li-actions">
+            <button class="icon-btn" onclick="Pages.podcast.edit('${p.id}')">✏️</button>
+            <button class="icon-btn" onclick="Pages.podcast.del('${p.id}')">🗑️</button>
+          </div>
+        </div>
+        ${p.rating?`<div style="margin-top:6px;font-size:14px">${'⭐'.repeat(p.rating)}</div>`:''}
+      </div>`;
+    });
+    $('#main').innerHTML=html;
+  },
+  add(){ this._form(); },
+  edit(id){ const p=DB.get('podcast',[]).find(x=>x.id===id); if(p) this._form(p); },
+  del(id){ if(!confirm('删除？')) return; DB.set('podcast',DB.get('podcast',[]).filter(x=>x.id!==id)); this.render(); },
+  _form(p){
+    const isEdit=!!p; p=p||{date:todayStr(),show:'',episode:'',duration:'',quote:'',rating:0,link:'',note:''};
+    const body=`
+      <div class="field"><label>小宇宙分享链接（可自动解析标题）</label><input id="f_link" value="${escapeHtml(p.link)}" placeholder="粘贴分享链接" oninput="Pages.podcast._parseLink(this.value)"></div>
+      <div class="row-2">
+        <div class="field"><label>节目名</label><input id="f_show" value="${escapeHtml(p.show)}" placeholder="比如：纵横四海"></div>
+        <div class="field"><label>单集标题</label><input id="f_ep" value="${escapeHtml(p.episode)}" placeholder="单集标题"></div>
+      </div>
+      <div class="row-2">
+        <div class="field"><label>时长(分钟)</label><input type="number" id="f_dur" value="${p.duration}" placeholder="60"></div>
+        <div class="field"><label>收听日期</label><input type="date" id="f_date" value="${p.date}"></div>
+      </div>
+      <div class="field"><label>评分</label>
+        <div class="chip-group" id="rateGroup">${[1,2,3,4,5].map(r=>`<button class="chip ${p.rating===r?'on':''}" data-v="${r}">${'⭐'.repeat(r)}</button>`).join('')}</div>
+      </div>
+      <div class="field"><label>金句/笔记</label><textarea id="f_quote" placeholder="印象深刻的观点...">${escapeHtml(p.quote||'')}</textarea></div>
+      <div class="field"><label>心得</label><input id="f_note" value="${escapeHtml(p.note||'')}"></div>
+    `;
+    const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.podcast._save('${p.id||''}')">${isEdit?'保存':'添加'}</button>`;
+    openModal(isEdit?'编辑播客':'记录播客', body, foot);
+    let rate=p.rating;
+    $$('#rateGroup .chip').forEach(c=>c.onclick=()=>{ rate=parseInt(c.dataset.v); $$('#rateGroup .chip').forEach(x=>x.classList.toggle('on',x===c)); });
+    this._rate=rate;
+  },
+  _parseLink(v){
+    // 简单提取：小宇宙链接通常含标题，这里仅做轻量提示
+    if(v.includes('xiaoyuzhoufm.com')){
+      const m=v.match(/\/podcast\/([^/?]+)/);
+      // 不做网络请求，仅清空提示
+    }
+  },
+  _save(id){
+    const data={show:$('#f_show').value.trim(),episode:$('#f_ep').value.trim(),duration:parseInt($('#f_dur').value)||0,date:$('#f_date').value,quote:$('#f_quote').value.trim(),rating:this._rate,link:$('#f_link').value.trim(),note:$('#f_note').value.trim()};
+    if(!data.episode){ toast('请输入单集标题'); return; }
+    const list=DB.get('podcast',[]);
+    if(id){ const p=list.find(x=>x.id===id); Object.assign(p,data); } else { list.push({id:uid(),...data,createdAt:Date.now()}); }
+    DB.set('podcast',list); closeModal(); this.render(); toast('已保存');
+  }
+};
+
+/* ---------- 设置 ---------- */
+Pages.settings = {
+  render(){
+    const cfg=DB.get('ai_config',{});
+    let html=`<div class="page-head"><h2>⚙️ 设置</h2></div>`;
+
+    html+=`<div class="card purple"><div class="section-title">🤖 AI 视觉识别配置</div>
+      <div style="font-size:13px;color:var(--ink-soft);margin-bottom:10px">配置多模态API Key后，饮食热量和运动记录可自动识别。兼容OpenAI格式（智谱/通义/OpenAI等）</div>
+      <div class="field"><label>API 地址</label><input id="ai_url" value="${escapeHtml(cfg.url||'')}" placeholder="https://api.openai.com/v1/chat/completions"></div>
+      <div class="field"><label>API Key</label><input id="ai_key" type="password" value="${escapeHtml(cfg.key||'')}" placeholder="sk-..."></div>
+      <div class="field"><label>模型名</label><input id="ai_model" value="${escapeHtml(cfg.model||'')}" placeholder="gpt-4o-mini / glm-4v / qwen-vl-plus"></div>
+      <button class="btn primary" onclick="Pages.settings.saveAi()">保存配置</button>
+    </div>`;
+
+    html+=`<div class="card yellow"><div class="section-title">💾 数据备份</div>
+      <div style="font-size:13px;color:var(--ink-soft);margin-bottom:10px">数据存在本地浏览器，换设备会丢失。建议定期导出备份。</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" onclick="Pages.settings.exportData()">📤 导出全部数据</button>
+        <button class="btn ghost" onclick="Pages.settings.importData()">📥 导入数据</button>
+        <input type="file" id="importFile" accept=".json" class="hidden">
+      </div>
+    </div>`;
+
+    html+=`<div class="card"><div class="section-title">📱 添加到主屏幕</div>
+      <div style="font-size:13px;color:var(--ink-soft);line-height:1.8">
+        <b>iPhone(Safari):</b> 点击底部分享按钮 → 添加到主屏幕<br>
+        <b>Android(Chrome):</b> 右上角菜单 → 添加到主屏幕<br>
+        添加后即可像App一样全屏打开，无浏览器地址栏。
+      </div></div>`;
+
+    html+=`<div class="card pink"><div class="section-title">⚠️ 危险操作</div>
+      <button class="btn danger" onclick="Pages.settings.resetAll()">🗑️ 清空全部数据</button>
+    </div>`;
+
+    html+=`<div style="text-align:center;color:var(--ink-light);font-size:12px;padding:20px">🐸 甜呱工作台 · 用💗制作<br>星露谷小屋 · 本地存储 · 隐私安全</div>`;
+
+    $('#main').innerHTML=html;
+    $('#importFile').onchange=(e)=>{
+      const f=e.target.files[0]; if(!f) return;
+      const r=new FileReader();
+      r.onload=()=>{
+        try{
+          const data=JSON.parse(r.result);
+          Object.keys(data).forEach(k=>{ if(k.startsWith('tg_')) localStorage.setItem(k, JSON.stringify(data[k])); });
+          toast('导入成功！刷新中...'); setTimeout(()=>location.reload(),800);
+        }catch(err){ toast('导入失败：文件格式错误'); }
+      };
+      r.readAsText(f);
+    };
+  },
+  saveAi(){
+    DB.set('ai_config',{url:$('#ai_url').value.trim()||'https://api.openai.com/v1/chat/completions',key:$('#ai_key').value.trim(),model:$('#ai_model').value.trim()||'gpt-4o-mini'});
+    toast('AI配置已保存');
+  },
+  exportData(){
+    const data={};
+    for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k.startsWith('tg_')) data[k]=JSON.parse(localStorage.getItem(k)); }
+    data._exportTime=new Date().toISOString();
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`甜呱工作台备份_${todayStr()}.json`;
+    a.click();
+    toast('已导出');
+  },
+  importData(){ $('#importFile').click(); },
+  resetAll(){
+    if(!confirm('确定清空全部数据？此操作不可恢复！建议先导出备份。')) return;
+    if(!confirm('再次确认：所有待办、记账、日程、学习等数据都将删除！')) return;
+    for(let i=localStorage.length-1;i>=0;i--){ const k=localStorage.key(i); if(k.startsWith('tg_')) localStorage.removeItem(k); }
+    toast('已清空，刷新中...'); setTimeout(()=>location.reload(),800);
+  }
+};
+
+/* ---------- 启动 ---------- */
+go('todo');
+
+</script>
+</body>
+</html>
