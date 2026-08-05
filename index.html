@@ -634,15 +634,14 @@ Pages.finance = {
     `;
     const foot=`<button class="btn ghost" onclick="closeModal()">取消</button><button class="btn primary" onclick="Pages.finance._save('${r.id||''}')">${isEdit?'保存':'记一笔'}</button>`;
     openModal(isEdit?'编辑记录':'记一笔', body, foot);
-    let type=r.type, cat=r.category;
+    this._cur={type:r.type,cat:r.category};
     $$('#typeGroup .chip').forEach(c=>c.onclick=()=>{
       $$('#typeGroup .chip').forEach(y=>y.classList.toggle('on',y===c));
-      type=c.dataset.v; cat=this.cats[type][0];
-      $('#catGroup').innerHTML=this.cats[type].map(x=>`<button class="chip ${x===cat?'on':''}" data-v="${escapeHtml(x)}">${x}</button>`).join('');
-      $$('#catGroup .chip').forEach(x=>x.onclick=()=>{ cat=x.dataset.v; $$('#catGroup .chip').forEach(y=>y.classList.toggle('on',y===x)); });
+      this._cur.type=c.dataset.v; this._cur.cat=this.cats[this._cur.type][0];
+      $('#catGroup').innerHTML=this.cats[this._cur.type].map(x=>`<button class="chip ${x===this._cur.cat?'on':''}" data-v="${escapeHtml(x)}">${x}</button>`).join('');
+      $$('#catGroup .chip').forEach(x=>x.onclick=()=>{ this._cur.cat=x.dataset.v; $$('#catGroup .chip').forEach(y=>y.classList.toggle('on',y===x)); });
     });
-    $$('#catGroup .chip').forEach(x=>x.onclick=()=>{ cat=x.dataset.v; $$('#catGroup .chip').forEach(y=>y.classList.toggle('on',y===x)); });
-    this._cur={type,cat};
+    $$('#catGroup .chip').forEach(x=>x.onclick=()=>{ this._cur.cat=x.dataset.v; $$('#catGroup .chip').forEach(y=>y.classList.toggle('on',y===x)); });
   },
   _save(id){
     const amount=parseFloat($('#f_amount').value);
