@@ -636,6 +636,7 @@ Pages.finance = {
     openModal(isEdit?'编辑记录':'记一笔', body, foot);
     let type=r.type, cat=r.category;
     $$('#typeGroup .chip').forEach(c=>c.onclick=()=>{
+      $$('#typeGroup .chip').forEach(y=>y.classList.toggle('on',y===c));
       type=c.dataset.v; cat=this.cats[type][0];
       $('#catGroup').innerHTML=this.cats[type].map(x=>`<button class="chip ${x===cat?'on':''}" data-v="${escapeHtml(x)}">${x}</button>`).join('');
       $$('#catGroup .chip').forEach(x=>x.onclick=()=>{ cat=x.dataset.v; $$('#catGroup .chip').forEach(y=>y.classList.toggle('on',y===x)); });
